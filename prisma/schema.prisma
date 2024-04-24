@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tb_carteira {
+  id_carteira                                       Int            @id @default(autoincrement())
+  id_usuario                                        Int
+  saldo                                             Float?
+  dt_criacao                                        DateTime       @default(now()) @db.Timestamp(0)
+  dt_alteracao                                      DateTime       @default(now()) @db.Timestamp(0)
+  tb_usuario                                        tb_usuario     @relation(fields: [id_usuario], references: [id_usuario], onDelete: NoAction, onUpdate: NoAction, map: "tb_carteira_ibfk_1")
+  tb_transacao_tb_transacao_id_origemTotb_carteira  tb_transacao[] @relation("tb_transacao_id_origemTotb_carteira")
+  tb_transacao_tb_transacao_id_destinoTotb_carteira tb_transacao[] @relation("tb_transacao_id_destinoTotb_carteira")
+
+  @@index([id_usuario], map: "id_usuario")
+}
+
+model tb_transacao {
+  id_transacao                                     Int          @id @default(autoincrement())
+  id_origem                                        Int
+  id_destino                                       Int?
+  valor                                            Float
+  tipo                                             String       @db.Char(20)
+  dt_criacao                                       DateTime     @default(now()) @db.Timestamp(0)
+  tb_carteira_tb_transacao_id_origemTotb_carteira  tb_carteira  @relation("tb_transacao_id_origemTotb_carteira", fields: [id_origem], references: [id_carteira], onDelete: NoAction, onUpdate: NoAction, map: "tb_transacao_ibfk_1")
+  tb_carteira_tb_transacao_id_destinoTotb_carteira tb_carteira? @relation("tb_transacao_id_destinoTotb_carteira", fields: [id_destino], references: [id_carteira], onDelete: NoAction, onUpdate: NoAction, map: "tb_transacao_ibfk_2")
+
+  @@index([id_destino], map: "id_destino")
+  @@index([id_origem], map: "id_origem")
+}
+
+model tb_usuario {
+  id_usuario    Int           @id @default(autoincrement())
+  tipo          String        @db.Char(20)
+  nome_completo String        @db.VarChar(100)
+  documento     String        @unique(map: "documento") @db.Char(14)
+  email         String        @unique(map: "email") @db.VarChar(100)
+  senha         String        @db.VarChar(100)
+  tb_carteira   tb_carteira[]
+}
