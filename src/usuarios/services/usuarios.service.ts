@@ -13,7 +13,7 @@ export class UsuariosService implements IUsuariosService {
   constructor(
     @Inject('IUsuariosRepository')
     private readonly repository: IUsuariosRepository,
-  ) { }
+  ) {}
 
   async criarUsuario(usuario: DadosNovoUsuario): Promise<Usuario> {
     usuario.senha = await bcrypt.hash(usuario.senha, 10);
@@ -33,8 +33,10 @@ export class UsuariosService implements IUsuariosService {
       .then((usuario) => {
         if (!usuario) throw new UsuarioNaoEncontrado();
         return usuario;
-      }).catch((error) => {
-        if (error instanceof UsuarioNaoEncontrado) throw new UsuarioNaoEncontrado();
+      })
+      .catch((error) => {
+        if (error instanceof UsuarioNaoEncontrado)
+          throw new UsuarioNaoEncontrado();
         throw new ErroAoBuscarUsuario(error);
       });
   }

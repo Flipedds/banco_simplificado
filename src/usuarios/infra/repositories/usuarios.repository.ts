@@ -6,7 +6,7 @@ import { IUsuariosRepository } from 'src/usuarios/domain/usuarios.interface.repo
 
 @Injectable()
 export class UsuariosRespository implements IUsuariosRepository {
-  constructor(private readonly prisma: PrismaClient) { }
+  constructor(private readonly prisma: PrismaClient) {}
 
   async buscarPorEmail(email: string): Promise<Usuario | null> {
     return await this.prisma.tb_usuario.findFirst({

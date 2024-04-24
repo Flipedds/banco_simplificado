@@ -1,16 +1,29 @@
-import { Body, Controller, Get, HttpCode, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Inject,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { IUsuariosService } from '../domain/usuarios.interface.service';
 import { DadosNovoUsuario } from '../dtos/usuarios.dto.novo';
 import { Usuario } from '../domain/usuarios.entity';
 import { UsuarioResponse } from '../domain/usuarios.novo.response';
-import { ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import {
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(
     @Inject('IUsuariosService') private readonly service: IUsuariosService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(201)
@@ -31,13 +44,13 @@ export class UsuariosController {
     };
   }
 
-  @Get(":documento")
+  @Get(':documento')
   @HttpCode(200)
   @ApiNotFoundResponse()
   @ApiInternalServerErrorResponse()
   @ApiParam({ name: 'documento', type: String })
   async buscarUsuarioPorDocumento(
-    @Param('documento') documento: string
+    @Param('documento') documento: string,
   ): Promise<UsuarioResponse> {
     const usuario: Usuario = await this.service.buscarUsuario(documento);
     return {
@@ -48,6 +61,6 @@ export class UsuariosController {
         email: usuario.email,
         tipo: usuario.tipo,
       },
-    }
+    };
   }
 }
