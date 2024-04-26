@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt';
 import { IUsuariosService } from '../domain/usuarios.interface.service';
 import { UsuarioNaoEncontrado } from '../infra/exceptions/usuarios.exception.404';
 import { ErroAoBuscarUsuario } from '../infra/exceptions/usuarios.exception.buscar';
+import { Carteira } from '../domain/usuarios.carteira.entity';
 
 @Injectable()
 export class UsuariosService implements IUsuariosService {
@@ -15,12 +16,15 @@ export class UsuariosService implements IUsuariosService {
     private readonly repository: IUsuariosRepository,
   ) {}
 
-  async criarUsuario(usuario: DadosNovoUsuario): Promise<Usuario> {
+  async criarUsuario(usuario: DadosNovoUsuario): Promise<{
+    novoUsuario: Usuario;
+    novaCarteira: Carteira;
+  }> {
     usuario.senha = await bcrypt.hash(usuario.senha, 10);
     return this.repository
       .criar(usuario)
-      .then((usuario) => {
-        return usuario;
+      .then((usuarioECarteira) => {
+        return usuarioECarteira;
       })
       .catch((error) => {
         throw new ErroAoCriarUsuario(error.message);

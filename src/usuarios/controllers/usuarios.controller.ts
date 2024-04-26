@@ -10,13 +10,14 @@ import {
 import { IUsuariosService } from '../domain/usuarios.interface.service';
 import { DadosNovoUsuario } from '../dtos/usuarios.dto.novo';
 import { Usuario } from '../domain/usuarios.entity';
-import { UsuarioResponse } from '../domain/usuarios.novo.response';
+import { UsuarioResponse } from '../dtos/usuarios.dto.novo.response';
 import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { Carteira } from '../domain/usuarios.carteira.entity';
 
 @ApiTags('usuarios')
 @Controller('usuarios')
@@ -31,15 +32,21 @@ export class UsuariosController {
   async novoUsuario(
     @Body() usuario: DadosNovoUsuario,
   ): Promise<UsuarioResponse> {
-    const usuarioCriado: Usuario = await this.service.criarUsuario(usuario);
+    const usuarioCriado: { novoUsuario: Usuario; novaCarteira: Carteira } =
+      await this.service.criarUsuario(usuario);
 
     return {
       mensagem: 'Usuário criado com sucesso',
       usuario: {
-        id_usuario: usuarioCriado.id_usuario,
-        nome_completo: usuarioCriado.nome_completo,
-        email: usuarioCriado.email,
-        tipo: usuarioCriado.tipo,
+        id_usuario: usuarioCriado.novoUsuario.id_usuario,
+        nome_completo: usuarioCriado.novoUsuario.nome_completo,
+        email: usuarioCriado.novoUsuario.email,
+        tipo: usuarioCriado.novoUsuario.tipo,
+      },
+      carteira: {
+        id_usuario: usuarioCriado.novaCarteira.id_usuario,
+        saldo: usuarioCriado.novaCarteira.saldo,
+        dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
       },
     };
   }

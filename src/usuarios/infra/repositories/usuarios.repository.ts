@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { DadosNovoUsuario } from '../../dtos/usuarios.dto.novo';
 import { Usuario } from '../../domain/usuarios.entity';
 import { IUsuariosRepository } from 'src/usuarios/domain/usuarios.interface.repository';
+import { Carteira } from 'src/usuarios/domain/usuarios.carteira.entity';
 
 @Injectable()
 export class UsuariosRespository implements IUsuariosRepository {
@@ -23,7 +24,17 @@ export class UsuariosRespository implements IUsuariosRepository {
     });
   }
 
-  async criar(usuario: DadosNovoUsuario): Promise<Usuario> {
-    return await this.prisma.tb_usuario.create({ data: usuario });
+  async criar(usuario: DadosNovoUsuario): Promise<{
+    novoUsuario: Usuario;
+    novaCarteira: Carteira;
+  }> {
+    const novoUsuario = await this.prisma.tb_usuario.create({ data: usuario });
+    const novaCarteira = await this.prisma.tb_carteira.create({
+      data: {
+        saldo: 0,
+        id_usuario: novoUsuario.id_usuario,
+      },
+    });
+    return { novoUsuario, novaCarteira };
   }
 }

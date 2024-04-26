@@ -4,20 +4,29 @@ import { UsuariosService } from './services/usuarios.service';
 import { TipoUsuario } from './enums/usuarios.enums.tipo';
 import { Usuario } from './domain/usuarios.entity';
 import { UsuariosController } from './controllers/usuarios.controller';
-import { UsuarioResponse } from './domain/usuarios.novo.response';
+import { UsuarioResponse } from './dtos/usuarios.dto.novo.response';
+import { Carteira } from './domain/usuarios.carteira.entity';
+
+const usuario: Usuario = {
+  id_usuario: 1,
+  tipo: TipoUsuario.COMUM,
+  nome_completo: 'mario da silva',
+  documento: '19483948392',
+  email: 'mariodasilva@gmail.com',
+  senha: 'OWoGV0I(C427',
+};
+
+const carteira: Carteira = {
+  id_carteira: 1,
+  saldo: 0,
+  id_usuario: 1,
+  dt_criacao: new Date(Date.parse('2024-04-25')),
+  dt_alteracao: new Date(Date.parse('2024-04-25')),
+};
 
 describe('UsuariosService', () => {
   let app: TestingModule;
   let service: IUsuariosService;
-
-  const usuario: Usuario = {
-    id_usuario: 1,
-    tipo: TipoUsuario.COMUM,
-    nome_completo: 'mario da silva',
-    documento: '19483948392',
-    email: 'mariodasilva@gmail.com',
-    senha: 'OWoGV0I(C427',
-  };
 
   beforeAll(async () => {
     app = await Test.createTestingModule({
@@ -28,7 +37,10 @@ describe('UsuariosService', () => {
             criar: jest
               .fn()
               .mockReturnValue(
-                new Promise<Usuario>((resolve) => resolve(usuario)),
+                new Promise<{ novoUsuario: Usuario; novaCarteira: Carteira }>(
+                  (resolve) =>
+                    resolve({ novoUsuario: usuario, novaCarteira: carteira }),
+                ),
               ),
             buscarPorDocumento: jest
               .fn()
@@ -65,7 +77,8 @@ describe('UsuariosService', () => {
         email: 'mariodasilva@gmail.com',
         senha: 'OWoGV0I(C427',
       };
-      expect(usuario).toStrictEqual(usuarioRecebido);
+      expect(usuario.novoUsuario).toStrictEqual(usuarioRecebido);
+      expect(usuario.novaCarteira).toStrictEqual(carteira);
     });
   });
 
@@ -89,15 +102,6 @@ describe('UsuariosController', () => {
   let app: TestingModule;
   let controller: UsuariosController;
 
-  const usuario: Usuario = {
-    id_usuario: 1,
-    tipo: TipoUsuario.COMUM,
-    nome_completo: 'mario da silva',
-    documento: '19483948392',
-    email: 'mariodasilva@gmail.com',
-    senha: 'OWoGV0I(C427',
-  };
-
   beforeAll(async () => {
     app = await Test.createTestingModule({
       controllers: [UsuariosController],
@@ -108,7 +112,10 @@ describe('UsuariosController', () => {
             criar: jest
               .fn()
               .mockReturnValue(
-                new Promise<Usuario>((resolve) => resolve(usuario)),
+                new Promise<{ novoUsuario: Usuario; novaCarteira: Carteira }>(
+                  (resolve) =>
+                    resolve({ novoUsuario: usuario, novaCarteira: carteira }),
+                ),
               ),
             buscarPorDocumento: jest
               .fn()
@@ -123,7 +130,10 @@ describe('UsuariosController', () => {
             criarUsuario: jest
               .fn()
               .mockReturnValue(
-                new Promise<Usuario>((resolve) => resolve(usuario)),
+                new Promise<{ novoUsuario: Usuario; novaCarteira: Carteira }>(
+                  (resolve) =>
+                    resolve({ novoUsuario: usuario, novaCarteira: carteira }),
+                ),
               ),
             buscarUsuario: jest
               .fn()
@@ -155,6 +165,11 @@ describe('UsuariosController', () => {
           tipo: TipoUsuario.COMUM,
           nome_completo: 'mario da silva',
           email: 'mariodasilva@gmail.com',
+        },
+        carteira: {
+          id_usuario: 1,
+          saldo: 0,
+          dt_criacao: new Date(Date.parse('2024-04-25')),
         },
       };
       expect(response).toStrictEqual(usuarioRecebido);
