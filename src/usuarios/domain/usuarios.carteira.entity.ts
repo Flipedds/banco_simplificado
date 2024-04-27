@@ -1,5 +1,5 @@
 export class Carteira {
-  id_carteira: number;
+  id: number;
   id_usuario: number;
   saldo: number;
   dt_criacao: Date;

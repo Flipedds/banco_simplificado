@@ -8,7 +8,7 @@ import { UsuarioResponse } from './dtos/usuarios.dto.novo.response';
 import { Carteira } from './domain/usuarios.carteira.entity';
 
 const usuario: Usuario = {
-  id_usuario: 1,
+  id: 1,
   tipo: TipoUsuario.COMUM,
   nome_completo: 'mario da silva',
   documento: '19483948392',
@@ -17,7 +17,7 @@ const usuario: Usuario = {
 };
 
 const carteira: Carteira = {
-  id_carteira: 1,
+  id: 1,
   saldo: 0,
   id_usuario: 1,
   dt_criacao: new Date(Date.parse('2024-04-25')),
@@ -70,7 +70,7 @@ describe('UsuariosService', () => {
       const usuario = await service.criarUsuario(novoUsuario);
 
       const usuarioRecebido: Usuario = {
-        id_usuario: 1,
+        id: 1,
         tipo: TipoUsuario.COMUM,
         nome_completo: 'mario da silva',
         documento: '19483948392',
@@ -86,7 +86,7 @@ describe('UsuariosService', () => {
     it('deve buscar um usuario', async () => {
       const usuario = await service.buscarUsuario('19483948392');
       const usuarioRecebido: Usuario = {
-        id_usuario: 1,
+        id: 1,
         tipo: TipoUsuario.COMUM,
         nome_completo: 'mario da silva',
         documento: '19483948392',
@@ -161,7 +161,7 @@ describe('UsuariosController', () => {
       const usuarioRecebido: UsuarioResponse = {
         mensagem: 'Usuário criado com sucesso',
         usuario: {
-          id_usuario: 1,
+          id: 1,
           tipo: TipoUsuario.COMUM,
           nome_completo: 'mario da silva',
           email: 'mariodasilva@gmail.com',
@@ -183,7 +183,7 @@ describe('UsuariosController', () => {
       const usuarioRecebido: UsuarioResponse = {
         mensagem: 'Usuário encontrado',
         usuario: {
-          id_usuario: 1,
+          id: 1,
           tipo: TipoUsuario.COMUM,
           nome_completo: 'mario da silva',
           email: 'mariodasilva@gmail.com',

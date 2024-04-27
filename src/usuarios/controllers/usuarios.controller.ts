@@ -38,13 +38,13 @@ export class UsuariosController {
     return {
       mensagem: 'Usuário criado com sucesso',
       usuario: {
-        id_usuario: usuarioCriado.novoUsuario.id_usuario,
+        id: usuarioCriado.novoUsuario.id,
         nome_completo: usuarioCriado.novoUsuario.nome_completo,
         email: usuarioCriado.novoUsuario.email,
         tipo: usuarioCriado.novoUsuario.tipo,
       },
       carteira: {
-        id_usuario: usuarioCriado.novaCarteira.id_usuario,
+        id_usuario: usuarioCriado.novaCarteira.id,
         saldo: usuarioCriado.novaCarteira.saldo,
         dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
       },
@@ -63,7 +63,7 @@ export class UsuariosController {
     return {
       mensagem: 'Usuário encontrado',
       usuario: {
-        id_usuario: usuario.id_usuario,
+        id: usuario.id,
         nome_completo: usuario.nome_completo,
         email: usuario.email,
         tipo: usuario.tipo,

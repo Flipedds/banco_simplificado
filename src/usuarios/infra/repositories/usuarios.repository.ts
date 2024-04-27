@@ -32,7 +32,7 @@ export class UsuariosRespository implements IUsuariosRepository {
     const novaCarteira = await this.prisma.tb_carteira.create({
       data: {
         saldo: 0,
-        id_usuario: novoUsuario.id_usuario,
+        id_usuario: novoUsuario.id,
       },
     });
     return { novoUsuario, novaCarteira };
