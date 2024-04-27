@@ -9,6 +9,10 @@ export interface IUsuariosRepository {
   criar(
     usuario: DadosNovoUsuario,
   ): Promise<{ novoUsuario: Usuario; novaCarteira: Carteira }>;
-  atualizar(documento: string, usuario: DadosAtualizarUsuario): Promise<Usuario>;
+  atualizar(
+    documento: string,
+    usuario: DadosAtualizarUsuario,
+  ): Promise<Usuario>;
   remover(documento: string): Promise<Usuario>;
+  listar(): Promise<Usuario[]>;
 }

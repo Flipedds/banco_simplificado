@@ -8,6 +8,10 @@ export interface IUsuariosService {
     usuario: DadosNovoUsuario,
   ): Promise<{ novoUsuario: Usuario; novaCarteira: Carteira }>;
   buscarUsuario(documento: string): Promise<Usuario>;
-  atualizarUsuario(documento: string, usuario: DadosAtualizarUsuario): Promise<Usuario>;
+  atualizarUsuario(
+    documento: string,
+    usuario: DadosAtualizarUsuario,
+  ): Promise<Usuario>;
   removerUsuario(documento: string): Promise<Usuario>;
+  listarUsuarios(): Promise<Usuario[]>;
 }

@@ -7,7 +7,7 @@ import {
   Inject,
   Param,
   Patch,
-  Post
+  Post,
 } from '@nestjs/common';
 import { IUsuariosService } from '../domain/usuarios.interface.service';
 import { DadosNovoUsuario } from '../dtos/usuarios.dto.novo';
@@ -21,13 +21,14 @@ import {
 } from '@nestjs/swagger';
 import { Carteira } from '../domain/usuarios.carteira.entity';
 import { DadosAtualizarUsuario } from '../dtos/usuarios.dto.atualizar';
+import { UsuarioSeguro } from '../types/usuarios.type.seguro';
 
 @ApiTags('usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(
     @Inject('IUsuariosService') private readonly service: IUsuariosService,
-  ) { }
+  ) {}
 
   @Post()
   @HttpCode(201)
@@ -74,6 +75,21 @@ export class UsuariosController {
     };
   }
 
+  @Get()
+  @HttpCode(200)
+  @ApiInternalServerErrorResponse()
+  async listarUsuarios(): Promise<UsuarioSeguro[]> {
+    const usuarios: Usuario[] = await this.service.listarUsuarios();
+    return usuarios.map((usuario) => {
+      return {
+        id: usuario.id,
+        nome_completo: usuario.nome_completo,
+        email: usuario.email,
+        tipo: usuario.tipo,
+      };
+    });
+  }
+
   @Patch(':documento')
   @HttpCode(200)
   @ApiNotFoundResponse()
@@ -107,7 +123,8 @@ export class UsuariosController {
   async removerUsuario(
     @Param('documento') documento: string,
   ): Promise<UsuarioResponse> {
-    const usuarioRemovido: Usuario = await this.service.removerUsuario(documento);
+    const usuarioRemovido: Usuario =
+      await this.service.removerUsuario(documento);
 
     return {
       mensagem: 'Usuário removido com sucesso',

@@ -6,13 +6,14 @@ import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('/api/v1');
   const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
     .setTitle('Banco Simplificado API')
     .setDescription('descrição do banco simplificado')
     .setVersion('1.0')
     .build();
   const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/api/v1/docs', app, document);
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
