@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Inject,
   Param,
-  Post,
+  Patch,
+  Post
 } from '@nestjs/common';
 import { IUsuariosService } from '../domain/usuarios.interface.service';
 import { DadosNovoUsuario } from '../dtos/usuarios.dto.novo';
@@ -18,13 +20,14 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Carteira } from '../domain/usuarios.carteira.entity';
+import { DadosAtualizarUsuario } from '../dtos/usuarios.dto.atualizar';
 
 @ApiTags('usuarios')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(
     @Inject('IUsuariosService') private readonly service: IUsuariosService,
-  ) {}
+  ) { }
 
   @Post()
   @HttpCode(201)
@@ -67,6 +70,52 @@ export class UsuariosController {
         nome_completo: usuario.nome_completo,
         email: usuario.email,
         tipo: usuario.tipo,
+      },
+    };
+  }
+
+  @Patch(':documento')
+  @HttpCode(200)
+  @ApiNotFoundResponse()
+  @ApiInternalServerErrorResponse()
+  @ApiParam({ name: 'documento', type: String })
+  async atualizarUsuario(
+    @Param('documento') documento: string,
+    @Body() usuario: DadosAtualizarUsuario,
+  ): Promise<UsuarioResponse> {
+    const usuarioAtualizado: Usuario = await this.service.atualizarUsuario(
+      documento,
+      usuario,
+    );
+
+    return {
+      mensagem: 'Usuário atualizado com sucesso',
+      usuario: {
+        id: usuarioAtualizado.id,
+        nome_completo: usuarioAtualizado.nome_completo,
+        email: usuarioAtualizado.email,
+        tipo: usuarioAtualizado.tipo,
+      },
+    };
+  }
+
+  @Delete(':documento')
+  @HttpCode(200)
+  @ApiNotFoundResponse()
+  @ApiInternalServerErrorResponse()
+  @ApiParam({ name: 'documento', type: String })
+  async removerUsuario(
+    @Param('documento') documento: string,
+  ): Promise<UsuarioResponse> {
+    const usuarioRemovido: Usuario = await this.service.removerUsuario(documento);
+
+    return {
+      mensagem: 'Usuário removido com sucesso',
+      usuario: {
+        id: usuarioRemovido.id,
+        nome_completo: usuarioRemovido.nome_completo,
+        email: usuarioRemovido.email,
+        tipo: usuarioRemovido.tipo,
       },
     };
   }
