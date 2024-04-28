@@ -9,6 +9,7 @@ import { UserEmailValidation } from './infra/usuarios/controller/validation/user
 import { RepositorioDeUsuariosPrisma } from './infra/usuarios/persistence/usuarios.repository';
 import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.repository';
 import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar';
+import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar';
 
 @Module({
   imports: [],
@@ -23,6 +24,11 @@ import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar'
     {
       provide: BuscarUsuario,
       useFactory: (repositorioDeUsuarios) => new BuscarUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios']
+    },
+    {
+      provide: ListarUsuarios,
+      useFactory: (repositorioDeUsuarios) => new ListarUsuarios(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios']
     },
     PrismaClient,
