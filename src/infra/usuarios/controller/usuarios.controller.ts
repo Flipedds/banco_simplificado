@@ -1,20 +1,23 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, InternalServerErrorException, NotFoundException, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, InternalServerErrorException, NotFoundException, Param, Patch, Post } from "@nestjs/common";
 import { CriarUsuario } from "src/application/usuarios/use-cases/usuarios.criar";
 import { DadosNovoUsuario } from "./dtos/usuarios.dto.novo";
 import { UsuarioResposta } from "./types/usuarios.types.resposta";
-import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiProduces, ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiNotFoundResponse, ApiOkResponse, ApiParam, ApiProduces, ApiTags } from "@nestjs/swagger";
 import { BuscarUsuario } from "src/application/usuarios/use-cases/usuarios.buscar";
 import { UsuarioEntidade } from "../persistence/usuarios.entity";
 import { Carteira } from "../persistence/usuarios.carteira.entity";
 import { ListarUsuarios } from "src/application/usuarios/use-cases/usuarios.listar";
 import { UsuarioSeguro } from "./types/usuarios.types.seguro";
 import { RemoverUsuario } from "src/application/usuarios/use-cases/usuarios.remover";
+import { AtualizarUsuario } from "src/application/usuarios/use-cases/usuarios.atualizar";
+import { DadosAtualizarUsuario } from "./dtos/usuarios.dto.atualizar";
 
 @ApiTags('Usuários')
 @Controller('usuarios')
 export class UsuariosController {
     constructor(private readonly criarUsuario: CriarUsuario, private readonly buscarUsuario: BuscarUsuario,
-        private readonly listarUsuarios: ListarUsuarios, private readonly remover: RemoverUsuario
+        private readonly listarUsuarios: ListarUsuarios, private readonly remover: RemoverUsuario,
+        private readonly atualizar: AtualizarUsuario
     ) { }
 
     @Post()
@@ -100,6 +103,7 @@ export class UsuariosController {
     }
 
     @Delete(':documento')
+    @ApiParam({ name: 'documento', type: String })
     @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
     @ApiInternalServerErrorResponse({ description: 'Erro ao remover usuário' })
     @HttpCode(200)
@@ -123,6 +127,36 @@ export class UsuariosController {
         }
         catch (error) {
             return new InternalServerErrorException('Erro ao remover usuário');
+        }
+    }
+
+    @Patch(':documento')
+    @HttpCode(200)
+    @ApiNotFoundResponse()
+    @ApiInternalServerErrorResponse()
+    @ApiParam({ name: 'documento', type: String })
+    async atualizarUsuario(
+        @Param('documento') documento: string,
+        @Body() usuario: DadosAtualizarUsuario
+    ): Promise<UsuarioResposta | HttpException> {
+        try {
+            return this.buscarUsuario.buscarUsuario(documento)
+                .then(async (usuarioBuscado: UsuarioEntidade) => {
+                    if (!usuarioBuscado) throw new NotFoundException('Usuário não encontrado');
+                    const usuarioAtualizado = await this.atualizar.atualizarUsuario(documento, usuario);
+                    if (!usuarioAtualizado) throw new NotFoundException('Usuário não retornado');
+                    return {
+                        mensagem: 'Usuário atualizado com sucesso',
+                        usuario: {
+                            id: usuarioAtualizado.id,
+                            nome_completo: usuarioAtualizado.nome_completo,
+                            email: usuarioAtualizado.email,
+                            tipo: usuarioAtualizado.tipo,
+                        },
+                    };
+                });
+        } catch (error) {
+            return new InternalServerErrorException('Erro ao atualizar usuário');
         }
     }
 }

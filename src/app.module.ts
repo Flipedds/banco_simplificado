@@ -11,6 +11,7 @@ import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.
 import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar';
 import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar';
 import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remover';
+import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atualizar';
 
 @Module({
   imports: [],
@@ -35,6 +36,11 @@ import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remove
     {
       provide: RemoverUsuario,
       useFactory: (repositorioDeUsuarios) => new RemoverUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios']
+    },
+    {
+      provide: AtualizarUsuario,
+      useFactory: (repositorioDeUsuarios) => new AtualizarUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios']
     },
     PrismaClient,
