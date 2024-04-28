@@ -1,4 +1,4 @@
-export class Usuario {
+export class UsuarioEntidade {
   id: number;
   tipo: string;
   nome_completo: string;
