@@ -6,4 +6,5 @@ export interface IRepositorioDeUsuarios {
     cadastrarUsuario(usuario: Usuario): Promise<{ novoUsuario: UsuarioEntidade; novaCarteira: Carteira }>;
     buscarUsuario(documento: string): Promise<UsuarioEntidade | null>;
     listarUsuarios(): Promise<UsuarioEntidade[]>;
+    remover(documento: string): Promise<UsuarioEntidade>;
 }

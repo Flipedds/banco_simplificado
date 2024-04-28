@@ -10,6 +10,7 @@ import { RepositorioDeUsuariosPrisma } from './infra/usuarios/persistence/usuari
 import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.repository';
 import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar';
 import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar';
+import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remover';
 
 @Module({
   imports: [],
@@ -29,6 +30,11 @@ import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar
     {
       provide: ListarUsuarios,
       useFactory: (repositorioDeUsuarios) => new ListarUsuarios(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios']
+    },
+    {
+      provide: RemoverUsuario,
+      useFactory: (repositorioDeUsuarios) => new RemoverUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios']
     },
     PrismaClient,

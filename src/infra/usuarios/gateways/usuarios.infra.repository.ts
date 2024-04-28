@@ -6,6 +6,9 @@ import { Carteira } from "../persistence/usuarios.carteira.entity";
 
 export class RepositorioDeUsuarios implements IRepositorioDeUsuarios {
     constructor(private readonly repositorio: IRepositorioDeUsuariosPrisma) { }
+    remover(documento: string): Promise<UsuarioEntidade> {
+        return this.repositorio.remover(documento);
+    }
     listarUsuarios(): Promise<UsuarioEntidade[]> {
         return this.repositorio.listar();
     }

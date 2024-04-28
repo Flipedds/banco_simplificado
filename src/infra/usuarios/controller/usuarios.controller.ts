@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpException, InternalServerErrorException, NotFoundException, Param, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, HttpException, InternalServerErrorException, NotFoundException, Param, Post } from "@nestjs/common";
 import { CriarUsuario } from "src/application/usuarios/use-cases/usuarios.criar";
 import { DadosNovoUsuario } from "./dtos/usuarios.dto.novo";
 import { UsuarioResposta } from "./types/usuarios.types.resposta";
@@ -8,12 +8,13 @@ import { UsuarioEntidade } from "../persistence/usuarios.entity";
 import { Carteira } from "../persistence/usuarios.carteira.entity";
 import { ListarUsuarios } from "src/application/usuarios/use-cases/usuarios.listar";
 import { UsuarioSeguro } from "./types/usuarios.types.seguro";
+import { RemoverUsuario } from "src/application/usuarios/use-cases/usuarios.remover";
 
 @ApiTags('Usuários')
 @Controller('usuarios')
 export class UsuariosController {
     constructor(private readonly criarUsuario: CriarUsuario, private readonly buscarUsuario: BuscarUsuario,
-        private readonly listarUsuarios: ListarUsuarios
+        private readonly listarUsuarios: ListarUsuarios, private readonly remover: RemoverUsuario
     ) { }
 
     @Post()
@@ -95,6 +96,33 @@ export class UsuariosController {
         }
         catch (error) {
             return new InternalServerErrorException('Erro ao listar usuários');
+        }
+    }
+
+    @Delete(':documento')
+    @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
+    @ApiInternalServerErrorResponse({ description: 'Erro ao remover usuário' })
+    @HttpCode(200)
+    async removerUsuario(
+        @Param('documento') documento: string
+    ): Promise<UsuarioResposta | HttpException> {
+        try {
+            const usuario = this.remover.removerUsuario(documento);
+            return usuario.then((usuario: UsuarioEntidade) => {
+                if (!usuario) throw new NotFoundException('Usuário não encontrado');
+                return {
+                    mensagem: 'Usuário removido com sucesso',
+                    usuario: {
+                        id: usuario.id,
+                        nome_completo: usuario.nome_completo,
+                        email: usuario.email,
+                        tipo: usuario.tipo,
+                    },
+                };
+            });
+        }
+        catch (error) {
+            return new InternalServerErrorException('Erro ao remover usuário');
         }
     }
 }
