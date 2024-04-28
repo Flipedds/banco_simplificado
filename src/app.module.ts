@@ -8,6 +8,7 @@ import { UserDocumentValidation } from './infra/usuarios/controller/validation/u
 import { UserEmailValidation } from './infra/usuarios/controller/validation/users.email.validation';
 import { RepositorioDeUsuariosPrisma } from './infra/usuarios/persistence/usuarios.repository';
 import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.repository';
+import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar';
 
 @Module({
   imports: [],
@@ -17,6 +18,11 @@ import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.
     {
       provide: CriarUsuario,
       useFactory: (repositorioDeUsuarios) => new CriarUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios']
+    },
+    {
+      provide: BuscarUsuario,
+      useFactory: (repositorioDeUsuarios) => new BuscarUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios']
     },
     PrismaClient,
