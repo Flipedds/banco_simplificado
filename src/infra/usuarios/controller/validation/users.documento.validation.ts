@@ -7,7 +7,6 @@ import {
 import { Inject, Injectable } from '@nestjs/common';
 import { IRepositorioDeUsuariosPrisma } from '../../persistence/usuarios.interface.repository';
 
-
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class UserDocumentValidation implements ValidatorConstraintInterface {

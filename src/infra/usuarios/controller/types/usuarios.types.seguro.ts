@@ -1,3 +1,3 @@
-import { UsuarioEntidade } from "../../persistence/usuarios.entity";
+import { UsuarioEntidade } from '../../persistence/usuarios.entity';
 
 export type UsuarioSeguro = Omit<UsuarioEntidade, 'senha' | 'documento'>;

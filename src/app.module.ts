@@ -20,40 +20,47 @@ import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atua
     AppService,
     {
       provide: CriarUsuario,
-      useFactory: (repositorioDeUsuarios) => new CriarUsuario(repositorioDeUsuarios),
-      inject: ['IRepositorioDeUsuarios']
+      useFactory: (repositorioDeUsuarios) =>
+        new CriarUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios'],
     },
     {
       provide: BuscarUsuario,
-      useFactory: (repositorioDeUsuarios) => new BuscarUsuario(repositorioDeUsuarios),
-      inject: ['IRepositorioDeUsuarios']
+      useFactory: (repositorioDeUsuarios) =>
+        new BuscarUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios'],
     },
     {
       provide: ListarUsuarios,
-      useFactory: (repositorioDeUsuarios) => new ListarUsuarios(repositorioDeUsuarios),
-      inject: ['IRepositorioDeUsuarios']
+      useFactory: (repositorioDeUsuarios) =>
+        new ListarUsuarios(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios'],
     },
     {
       provide: RemoverUsuario,
-      useFactory: (repositorioDeUsuarios) => new RemoverUsuario(repositorioDeUsuarios),
-      inject: ['IRepositorioDeUsuarios']
+      useFactory: (repositorioDeUsuarios) =>
+        new RemoverUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios'],
     },
     {
       provide: AtualizarUsuario,
-      useFactory: (repositorioDeUsuarios) => new AtualizarUsuario(repositorioDeUsuarios),
-      inject: ['IRepositorioDeUsuarios']
+      useFactory: (repositorioDeUsuarios) =>
+        new AtualizarUsuario(repositorioDeUsuarios),
+      inject: ['IRepositorioDeUsuarios'],
     },
     PrismaClient,
     UserDocumentValidation,
     UserEmailValidation,
     {
       provide: 'IRepositorioDeUsuarios',
-      useFactory: (repositorioPrisma) => new RepositorioDeUsuarios(repositorioPrisma),
-      inject: ['IRepositorioDeUsuariosPrisma']
+      useFactory: (repositorioPrisma) =>
+        new RepositorioDeUsuarios(repositorioPrisma),
+      inject: ['IRepositorioDeUsuariosPrisma'],
     },
     {
       provide: 'IRepositorioDeUsuariosPrisma',
       useClass: RepositorioDeUsuariosPrisma,
-    }],
+    },
+  ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -7,7 +7,9 @@ import { IRepositorioDeUsuariosPrisma } from './usuarios.interface.repository';
 import { Carteira } from './usuarios.carteira.entity';
 
 @Injectable()
-export class RepositorioDeUsuariosPrisma implements IRepositorioDeUsuariosPrisma {
+export class RepositorioDeUsuariosPrisma
+  implements IRepositorioDeUsuariosPrisma
+{
   constructor(private readonly prisma: PrismaClient) {}
 
   async listar(): Promise<UsuarioEntidade[]> {
@@ -37,13 +39,15 @@ export class RepositorioDeUsuariosPrisma implements IRepositorioDeUsuariosPrisma
     novoUsuario: UsuarioEntidade;
     novaCarteira: Carteira;
   }> {
-    const novoUsuario = await this.prisma.tb_usuario.create({ data: {
-      nome_completo: usuario.getNomeCompleto,
-      documento: usuario.getDocumento,
-      tipo: usuario.getTipo,
-      email: usuario.getEmail,
-      senha: usuario.getSenha
-    } });
+    const novoUsuario = await this.prisma.tb_usuario.create({
+      data: {
+        nome_completo: usuario.getNomeCompleto,
+        documento: usuario.getDocumento,
+        tipo: usuario.getTipo,
+        email: usuario.getEmail,
+        senha: usuario.getSenha,
+      },
+    });
     const novaCarteira = await this.prisma.tb_carteira.create({
       data: {
         saldo: 0,
