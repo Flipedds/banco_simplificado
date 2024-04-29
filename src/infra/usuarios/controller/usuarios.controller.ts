@@ -40,7 +40,7 @@ export class UsuariosController {
     private readonly listar: ListarUsuarios,
     private readonly remover: RemoverUsuario,
     private readonly atualizar: AtualizarUsuario,
-  ) {}
+  ) { }
 
   @Post()
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
@@ -49,16 +49,15 @@ export class UsuariosController {
   async novoUsuario(
     @Body() usuario: DadosNovoUsuario,
   ): Promise<UsuarioResposta | InternalServerErrorException> {
-    try {
-      const usuarioCriado = this.criar.criarUsuario(usuario);
-      return usuarioCriado.then(
+    return new Promise((resolve, reject) => {
+      this.criar.criarUsuario(usuario).then(
         (usuarioCriado: {
           novoUsuario: UsuarioEntidade;
           novaCarteira: Carteira;
         }) => {
           if (!usuarioCriado)
-            throw new NotFoundException('Usuário não retornado');
-          return {
+            reject(new NotFoundException('Usuário não retornado'));
+          resolve({
             mensagem: 'Usuário criado com sucesso',
             usuario: {
               id: usuarioCriado.novoUsuario.id,
@@ -71,38 +70,40 @@ export class UsuariosController {
               saldo: usuarioCriado.novaCarteira.saldo,
               dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
             },
-          };
+          });
         },
-      );
-    } catch (error) {
-      return new InternalServerErrorException('Erro ao criar usuário');
-    }
+      ).catch((error) => {
+        reject(new InternalServerErrorException({ "mensagem": "Erro ao criar usuário", "error": error }))
+      });
+    });
   }
 
   @Get(':documento')
+  @ApiOkResponse({ description: 'Usuário encontrado com sucesso' })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao buscar usuário' })
   @HttpCode(200)
   async buscarUsuarioPorDocumento(
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | NotFoundException> {
-    try {
-      const usuario = this.buscar.buscarUsuario(documento);
-      return usuario.then((usuario: UsuarioEntidade) => {
-        if (!usuario) throw new NotFoundException('Usuário não encontrado');
-        return {
-          mensagem: 'Usuário encontrado com sucesso',
-          usuario: {
-            id: usuario.id,
-            nome_completo: usuario.nome_completo,
-            email: usuario.email,
-            tipo: usuario.tipo,
-          },
-        };
+    return new Promise((resolve, reject) => {
+      this.buscar.buscarUsuario(documento).then(
+        (usuario: UsuarioEntidade) => {
+          if (!usuario) reject(new NotFoundException('Usuário não encontrado'));
+          resolve({
+            mensagem: 'Usuário encontrado com sucesso',
+            usuario: {
+              id: usuario.id,
+              nome_completo: usuario.nome_completo,
+              email: usuario.email,
+              tipo: usuario.tipo,
+            },
+          });
+        },
+      ).catch((error) => {
+        reject(new InternalServerErrorException({ "mensagem": "Erro ao buscar usuário", "error": error }))
       });
-    } catch (error) {
-      return new InternalServerErrorException('Erro ao buscar usuário');
-    }
+    });
   }
 
   @Get()
@@ -110,88 +111,95 @@ export class UsuariosController {
   @ApiInternalServerErrorResponse({ description: 'Erro ao listar usuários' })
   @ApiOkResponse({ description: 'Usuários listados com sucesso' })
   async listarUsuariosAscendente(): Promise<UsuarioSeguro[] | HttpException> {
-    try {
-      const usuarios = this.listar.listarUsuarios();
-      return usuarios.then((usuarios: UsuarioEntidade[]) => {
-        if (!usuarios) throw new NotFoundException('Usuários não encontrados');
-        return usuarios.map((usuario: UsuarioEntidade) => {
-          return {
-            id: usuario.id,
-            nome_completo: usuario.nome_completo,
-            email: usuario.email,
-            tipo: usuario.tipo,
-          };
-        });
+    return new Promise((resolve, reject) => {
+      this.listar.listarUsuarios().then(
+        (usuarios: UsuarioEntidade[]) => {
+          if (!usuarios) reject(new NotFoundException('Usuários não encontrados'));
+          resolve(usuarios.map((usuario: UsuarioEntidade) => {
+            return {
+              id: usuario.id,
+              nome_completo: usuario.nome_completo,
+              email: usuario.email,
+              tipo: usuario.tipo,
+            };
+          }));
+        },
+      ).catch((error) => {
+        reject(new InternalServerErrorException({ "mensagem": "Erro ao listar usuários", "error": error }))
       });
-    } catch (error) {
-      return new InternalServerErrorException('Erro ao listar usuários');
-    }
+    });
   }
 
   @Delete(':documento')
   @ApiParam({ name: 'documento', type: String })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao remover usuário' })
+  @ApiOkResponse({ description: 'Usuário removido com sucesso' })
   @HttpCode(200)
   async removerUsuario(
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | HttpException> {
-    try {
-      return this.buscar
-        .buscarUsuario(documento)
-        .then(async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado)
-            throw new NotFoundException('Usuário não encontrado');
-          const usuario = await this.remover.removerUsuario(documento);
-          if (!usuario) throw new NotFoundException('Usuário não retornado');
-          return {
-            mensagem: 'Usuário removido com sucesso',
-            usuario: {
-              id: usuario.id,
-              nome_completo: usuario.nome_completo,
-              email: usuario.email,
-              tipo: usuario.tipo,
-            },
-          };
-        });
-    } catch (error) {
-      return new InternalServerErrorException('Erro ao remover usuário');
-    }
+    return new Promise((resolve, reject) => {
+      this.buscar.buscarUsuario(documento).then(
+        async (usuarioBuscado: UsuarioEntidade) => {
+          if (!usuarioBuscado) reject(new NotFoundException('Usuário não encontrado'));
+          this.remover.removerUsuario(documento)
+            .then((usuario: UsuarioEntidade) => {
+              if (!usuario) reject(new NotFoundException('Usuário não retornado'));
+              resolve({
+                mensagem: 'Usuário removido com sucesso',
+                usuario: {
+                  id: usuario.id,
+                  nome_completo: usuario.nome_completo,
+                  email: usuario.email,
+                  tipo: usuario.tipo,
+                },
+              })
+            }).catch((error) => {
+              reject(new InternalServerErrorException({ "mensagem": "Erro ao remover usuário", "error": error }));
+            });
+        },
+      ).catch((error) => {
+        reject(new InternalServerErrorException({ "mensagem": "Erro ao remover usuário", "error": error }));
+      });
+    });
   }
 
   @Patch(':documento')
   @HttpCode(200)
-  @ApiNotFoundResponse()
-  @ApiInternalServerErrorResponse()
+  @ApiOkResponse({ description: 'Usuário atualizado com sucesso' })
+  @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
+  @ApiInternalServerErrorResponse({ description: 'Erro ao atualizar usuário' })
   @ApiParam({ name: 'documento', type: String })
   async atualizarUsuario(
     @Param('documento') documento: string,
     @Body() usuario: DadosAtualizarUsuario,
   ): Promise<UsuarioResposta | HttpException> {
-    try {
-      return this.buscar
+    return new Promise((resolve, reject) => {
+      this.buscar
         .buscarUsuario(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado)
-            throw new NotFoundException('Usuário não encontrado');
-          const usuarioAtualizado = await this.atualizar.atualizarUsuario(
+          if (!usuarioBuscado) reject(new NotFoundException('Usuário não encontrado'));
+          this.atualizar.atualizarUsuario(
             documento,
             usuario,
-          );
-          if (!usuarioAtualizado)
-            throw new NotFoundException('Usuário não retornado');
-          return {
-            mensagem: 'Usuário atualizado com sucesso',
-            usuario: {
-              id: usuarioAtualizado.id,
-              nome_completo: usuarioAtualizado.nome_completo,
-              email: usuarioAtualizado.email,
-              tipo: usuarioAtualizado.tipo,
-            },
-          };
+          ).then((usuarioAtualizado: UsuarioEntidade) => {
+            if (!usuarioAtualizado) reject(new NotFoundException('Usuário não retornado'));
+            resolve({
+              mensagem: 'Usuário atualizado com sucesso',
+              usuario: {
+                id: usuarioAtualizado.id,
+                nome_completo: usuarioAtualizado.nome_completo,
+                email: usuarioAtualizado.email,
+                tipo: usuarioAtualizado.tipo,
+              },
+            })
+          }).catch((error) => {
+            reject(new InternalServerErrorException({ "mensagem": "Erro ao atualizar usuário", "error": error }))
+          });
+        }).catch((error) => {
+          reject(new InternalServerErrorException({ "mensagem": "Erro ao atualizar usuário", "error": error }))
         });
-    } catch (error) {
-      return new InternalServerErrorException('Erro ao atualizar usuário');
-    }
+    });
   }
 }
