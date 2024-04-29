@@ -111,19 +111,21 @@ export class UsuariosController {
         @Param('documento') documento: string
     ): Promise<UsuarioResposta | HttpException> {
         try {
-            const usuario = this.remover.removerUsuario(documento);
-            return usuario.then((usuario: UsuarioEntidade) => {
-                if (!usuario) throw new NotFoundException('Usuário não encontrado');
-                return {
-                    mensagem: 'Usuário removido com sucesso',
-                    usuario: {
-                        id: usuario.id,
-                        nome_completo: usuario.nome_completo,
-                        email: usuario.email,
-                        tipo: usuario.tipo,
-                    },
-                };
-            });
+            return this.buscarUsuario.buscarUsuario(documento)
+                .then(async (usuarioBuscado: UsuarioEntidade) => {
+                    if (!usuarioBuscado) throw new NotFoundException('Usuário não encontrado');
+                    const usuario = await this.remover.removerUsuario(documento);
+                    if (!usuario) throw new NotFoundException('Usuário não retornado');
+                    return {
+                        mensagem: 'Usuário removido com sucesso',
+                        usuario: {
+                            id: usuario.id,
+                            nome_completo: usuario.nome_completo,
+                            email: usuario.email,
+                            tipo: usuario.tipo,
+                        },
+                    };
+                });
         }
         catch (error) {
             return new InternalServerErrorException('Erro ao remover usuário');
