@@ -40,7 +40,7 @@ export class UsuariosController {
     private readonly listar: ListarUsuarios,
     private readonly remover: RemoverUsuario,
     private readonly atualizar: AtualizarUsuario,
-  ) { }
+  ) {}
 
   @Post()
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
@@ -50,31 +50,39 @@ export class UsuariosController {
     @Body() usuario: DadosNovoUsuario,
   ): Promise<UsuarioResposta | InternalServerErrorException> {
     return new Promise((resolve, reject) => {
-      this.criar.criarUsuario(usuario).then(
-        (usuarioCriado: {
-          novoUsuario: UsuarioEntidade;
-          novaCarteira: Carteira;
-        }) => {
-          if (!usuarioCriado)
-            reject(new NotFoundException('Usuário não retornado'));
-          resolve({
-            mensagem: 'Usuário criado com sucesso',
-            usuario: {
-              id: usuarioCriado.novoUsuario.id,
-              nome_completo: usuarioCriado.novoUsuario.nome_completo,
-              email: usuarioCriado.novoUsuario.email,
-              tipo: usuarioCriado.novoUsuario.tipo,
-            },
-            carteira: {
-              id_usuario: usuarioCriado.novaCarteira.id,
-              saldo: usuarioCriado.novaCarteira.saldo,
-              dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
-            },
-          });
-        },
-      ).catch((error) => {
-        reject(new InternalServerErrorException({ "mensagem": "Erro ao criar usuário", "error": error }))
-      });
+      this.criar
+        .criarUsuario(usuario)
+        .then(
+          (usuarioCriado: {
+            novoUsuario: UsuarioEntidade;
+            novaCarteira: Carteira;
+          }) => {
+            if (!usuarioCriado)
+              reject(new NotFoundException('Usuário não retornado'));
+            resolve({
+              mensagem: 'Usuário criado com sucesso',
+              usuario: {
+                id: usuarioCriado.novoUsuario.id,
+                nome_completo: usuarioCriado.novoUsuario.nome_completo,
+                email: usuarioCriado.novoUsuario.email,
+                tipo: usuarioCriado.novoUsuario.tipo,
+              },
+              carteira: {
+                id_usuario: usuarioCriado.novaCarteira.id,
+                saldo: usuarioCriado.novaCarteira.saldo,
+                dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
+              },
+            });
+          },
+        )
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao criar usuário',
+              error: error,
+            }),
+          );
+        });
     });
   }
 
@@ -87,8 +95,9 @@ export class UsuariosController {
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | NotFoundException> {
     return new Promise((resolve, reject) => {
-      this.buscar.buscarUsuario(documento).then(
-        (usuario: UsuarioEntidade) => {
+      this.buscar
+        .buscarUsuario(documento)
+        .then((usuario: UsuarioEntidade) => {
           if (!usuario) reject(new NotFoundException('Usuário não encontrado'));
           resolve({
             mensagem: 'Usuário encontrado com sucesso',
@@ -99,10 +108,15 @@ export class UsuariosController {
               tipo: usuario.tipo,
             },
           });
-        },
-      ).catch((error) => {
-        reject(new InternalServerErrorException({ "mensagem": "Erro ao buscar usuário", "error": error }))
-      });
+        })
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao buscar usuário',
+              error: error,
+            }),
+          );
+        });
     });
   }
 
@@ -112,21 +126,30 @@ export class UsuariosController {
   @ApiOkResponse({ description: 'Usuários listados com sucesso' })
   async listarUsuariosAscendente(): Promise<UsuarioSeguro[] | HttpException> {
     return new Promise((resolve, reject) => {
-      this.listar.listarUsuarios().then(
-        (usuarios: UsuarioEntidade[]) => {
-          if (!usuarios) reject(new NotFoundException('Usuários não encontrados'));
-          resolve(usuarios.map((usuario: UsuarioEntidade) => {
-            return {
-              id: usuario.id,
-              nome_completo: usuario.nome_completo,
-              email: usuario.email,
-              tipo: usuario.tipo,
-            };
-          }));
-        },
-      ).catch((error) => {
-        reject(new InternalServerErrorException({ "mensagem": "Erro ao listar usuários", "error": error }))
-      });
+      this.listar
+        .listarUsuarios()
+        .then((usuarios: UsuarioEntidade[]) => {
+          if (!usuarios)
+            reject(new NotFoundException('Usuários não encontrados'));
+          resolve(
+            usuarios.map((usuario: UsuarioEntidade) => {
+              return {
+                id: usuario.id,
+                nome_completo: usuario.nome_completo,
+                email: usuario.email,
+                tipo: usuario.tipo,
+              };
+            }),
+          );
+        })
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao listar usuários',
+              error: error,
+            }),
+          );
+        });
     });
   }
 
@@ -140,12 +163,16 @@ export class UsuariosController {
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | HttpException> {
     return new Promise((resolve, reject) => {
-      this.buscar.buscarUsuario(documento).then(
-        async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado) reject(new NotFoundException('Usuário não encontrado'));
-          this.remover.removerUsuario(documento)
+      this.buscar
+        .buscarUsuario(documento)
+        .then(async (usuarioBuscado: UsuarioEntidade) => {
+          if (!usuarioBuscado)
+            reject(new NotFoundException('Usuário não encontrado'));
+          this.remover
+            .removerUsuario(documento)
             .then((usuario: UsuarioEntidade) => {
-              if (!usuario) reject(new NotFoundException('Usuário não retornado'));
+              if (!usuario)
+                reject(new NotFoundException('Usuário não retornado'));
               resolve({
                 mensagem: 'Usuário removido com sucesso',
                 usuario: {
@@ -154,14 +181,25 @@ export class UsuariosController {
                   email: usuario.email,
                   tipo: usuario.tipo,
                 },
-              })
-            }).catch((error) => {
-              reject(new InternalServerErrorException({ "mensagem": "Erro ao remover usuário", "error": error }));
+              });
+            })
+            .catch((error) => {
+              reject(
+                new InternalServerErrorException({
+                  mensagem: 'Erro ao remover usuário',
+                  error: error,
+                }),
+              );
             });
-        },
-      ).catch((error) => {
-        reject(new InternalServerErrorException({ "mensagem": "Erro ao remover usuário", "error": error }));
-      });
+        })
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao remover usuário',
+              error: error,
+            }),
+          );
+        });
     });
   }
 
@@ -179,26 +217,39 @@ export class UsuariosController {
       this.buscar
         .buscarUsuario(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado) reject(new NotFoundException('Usuário não encontrado'));
-          this.atualizar.atualizarUsuario(
-            documento,
-            usuario,
-          ).then((usuarioAtualizado: UsuarioEntidade) => {
-            if (!usuarioAtualizado) reject(new NotFoundException('Usuário não retornado'));
-            resolve({
-              mensagem: 'Usuário atualizado com sucesso',
-              usuario: {
-                id: usuarioAtualizado.id,
-                nome_completo: usuarioAtualizado.nome_completo,
-                email: usuarioAtualizado.email,
-                tipo: usuarioAtualizado.tipo,
-              },
+          if (!usuarioBuscado)
+            reject(new NotFoundException('Usuário não encontrado'));
+          this.atualizar
+            .atualizarUsuario(documento, usuario)
+            .then((usuarioAtualizado: UsuarioEntidade) => {
+              if (!usuarioAtualizado)
+                reject(new NotFoundException('Usuário não retornado'));
+              resolve({
+                mensagem: 'Usuário atualizado com sucesso',
+                usuario: {
+                  id: usuarioAtualizado.id,
+                  nome_completo: usuarioAtualizado.nome_completo,
+                  email: usuarioAtualizado.email,
+                  tipo: usuarioAtualizado.tipo,
+                },
+              });
             })
-          }).catch((error) => {
-            reject(new InternalServerErrorException({ "mensagem": "Erro ao atualizar usuário", "error": error }))
-          });
-        }).catch((error) => {
-          reject(new InternalServerErrorException({ "mensagem": "Erro ao atualizar usuário", "error": error }))
+            .catch((error) => {
+              reject(
+                new InternalServerErrorException({
+                  mensagem: 'Erro ao atualizar usuário',
+                  error: error,
+                }),
+              );
+            });
+        })
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao atualizar usuário',
+              error: error,
+            }),
+          );
         });
     });
   }
