@@ -35,9 +35,9 @@ import { DadosAtualizarUsuario } from './dtos/usuarios.dto.atualizar';
 @Controller('usuarios')
 export class UsuariosController {
   constructor(
-    private readonly criarUsuario: CriarUsuario,
-    private readonly buscarUsuario: BuscarUsuario,
-    private readonly listarUsuarios: ListarUsuarios,
+    private readonly criar: CriarUsuario,
+    private readonly buscar: BuscarUsuario,
+    private readonly listar: ListarUsuarios,
     private readonly remover: RemoverUsuario,
     private readonly atualizar: AtualizarUsuario,
   ) {}
@@ -50,7 +50,7 @@ export class UsuariosController {
     @Body() usuario: DadosNovoUsuario,
   ): Promise<UsuarioResposta | InternalServerErrorException> {
     try {
-      const usuarioCriado = this.criarUsuario.criarUsuario(usuario);
+      const usuarioCriado = this.criar.criarUsuario(usuario);
       return usuarioCriado.then(
         (usuarioCriado: {
           novoUsuario: UsuarioEntidade;
@@ -87,7 +87,7 @@ export class UsuariosController {
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | NotFoundException> {
     try {
-      const usuario = this.buscarUsuario.buscarUsuario(documento);
+      const usuario = this.buscar.buscarUsuario(documento);
       return usuario.then((usuario: UsuarioEntidade) => {
         if (!usuario) throw new NotFoundException('Usuário não encontrado');
         return {
@@ -111,7 +111,7 @@ export class UsuariosController {
   @ApiOkResponse({ description: 'Usuários listados com sucesso' })
   async listarUsuariosAscendente(): Promise<UsuarioSeguro[] | HttpException> {
     try {
-      const usuarios = this.listarUsuarios.listarUsuarios();
+      const usuarios = this.listar.listarUsuarios();
       return usuarios.then((usuarios: UsuarioEntidade[]) => {
         if (!usuarios) throw new NotFoundException('Usuários não encontrados');
         return usuarios.map((usuario: UsuarioEntidade) => {
@@ -137,7 +137,7 @@ export class UsuariosController {
     @Param('documento') documento: string,
   ): Promise<UsuarioResposta | HttpException> {
     try {
-      return this.buscarUsuario
+      return this.buscar
         .buscarUsuario(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
           if (!usuarioBuscado)
@@ -169,7 +169,7 @@ export class UsuariosController {
     @Body() usuario: DadosAtualizarUsuario,
   ): Promise<UsuarioResposta | HttpException> {
     try {
-      return this.buscarUsuario
+      return this.buscar
         .buscarUsuario(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
           if (!usuarioBuscado)
