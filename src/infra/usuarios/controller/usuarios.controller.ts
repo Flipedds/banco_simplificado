@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CriarUsuario } from 'src/application/usuarios/use-cases/usuarios.criar';
 import { DadosNovoUsuario } from './dtos/usuarios.dto.novo';
@@ -30,6 +31,7 @@ import { UsuarioSeguro } from './types/usuarios.types.seguro';
 import { RemoverUsuario } from 'src/application/usuarios/use-cases/usuarios.remover';
 import { AtualizarUsuario } from 'src/application/usuarios/use-cases/usuarios.atualizar';
 import { DadosAtualizarUsuario } from './dtos/usuarios.dto.atualizar';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 
 @ApiTags('Usuários')
 @Controller('usuarios')
@@ -40,7 +42,7 @@ export class UsuariosController {
     private readonly listar: ListarUsuarios,
     private readonly remover: RemoverUsuario,
     private readonly atualizar: AtualizarUsuario,
-  ) {}
+  ) { }
 
   @Post()
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
@@ -90,6 +92,7 @@ export class UsuariosController {
   @ApiOkResponse({ description: 'Usuário encontrado com sucesso' })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao buscar usuário' })
+  @UseInterceptors(CacheInterceptor)
   @HttpCode(200)
   async buscarUsuarioPorDocumento(
     @Param('documento') documento: string,
@@ -124,6 +127,7 @@ export class UsuariosController {
   @ApiNotFoundResponse({ description: 'Usuários não encontrados' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao listar usuários' })
   @ApiOkResponse({ description: 'Usuários listados com sucesso' })
+  @UseInterceptors(CacheInterceptor)
   async listarUsuariosAscendente(): Promise<UsuarioSeguro[] | HttpException> {
     return new Promise((resolve, reject) => {
       this.listar

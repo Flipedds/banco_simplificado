@@ -12,9 +12,22 @@ import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar'
 import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar';
 import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remover';
 import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atualizar';
+import { CacheModule } from '@nestjs/cache-manager';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
-  imports: [],
+  imports: [
+    CacheModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        store: redisStore,
+        url: configService.get('REDIS_URL'),
+        ttl: 10 * 1000,
+      }),
+      inject: [ConfigService],
+    })
+  ],
   controllers: [AppController, UsuariosController],
   providers: [
     AppService,
@@ -63,4 +76,4 @@ import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atua
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
