@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpException,
+  Inject,
   InternalServerErrorException,
   NotFoundException,
   Param,
@@ -12,7 +13,6 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { CriarUsuario } from 'src/application/usuarios/use-cases/usuarios.criar';
 import { DadosNovoUsuario } from './dtos/usuarios.dto.novo';
 import { UsuarioResposta } from './types/usuarios.types.resposta';
 import {
@@ -23,25 +23,26 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { BuscarUsuario } from 'src/application/usuarios/use-cases/usuarios.buscar';
 import { UsuarioEntidade } from '../persistence/usuarios.entity';
 import { Carteira } from '../persistence/usuarios.carteira.entity';
-import { ListarUsuarios } from 'src/application/usuarios/use-cases/usuarios.listar';
 import { UsuarioSeguro } from './types/usuarios.types.seguro';
-import { RemoverUsuario } from 'src/application/usuarios/use-cases/usuarios.remover';
-import { AtualizarUsuario } from 'src/application/usuarios/use-cases/usuarios.atualizar';
 import { DadosAtualizarUsuario } from './dtos/usuarios.dto.atualizar';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { ICriarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.criar';
+import { IBuscarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.buscar';
+import { IListarUsuarios } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.listar';
+import { IRemoverUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.remover';
+import { IAtualizarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.atualizar';
 
 @ApiTags('Usuários')
 @Controller('usuarios')
 export class UsuariosController {
   constructor(
-    private readonly criar: CriarUsuario,
-    private readonly buscar: BuscarUsuario,
-    private readonly listar: ListarUsuarios,
-    private readonly remover: RemoverUsuario,
-    private readonly atualizar: AtualizarUsuario,
+    @Inject('ICriarUsuario') private readonly criar: ICriarUsuario,
+    @Inject('IBuscarUsuario') private readonly buscar: IBuscarUsuario,
+    @Inject('IListarUsuarios') private readonly listar: IListarUsuarios,
+    @Inject('IRemoverUsuario') private readonly remover: IRemoverUsuario,
+    @Inject('IAtualizarUsuario') private readonly atualizar: IAtualizarUsuario,
   ) { }
 
   @Post()

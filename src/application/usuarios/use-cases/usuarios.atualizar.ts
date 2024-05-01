@@ -2,8 +2,9 @@ import { DadosAtualizarUsuario } from 'src/infra/usuarios/controller/dtos/usuari
 import { IRepositorioDeUsuarios } from '../gateways/usuarios.interface';
 import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
 import * as bcrypt from 'bcrypt';
+import { IAtualizarUsuario } from './interfaces/usuarios.interface.atualizar';
 
-export class AtualizarUsuario {
+export class AtualizarUsuario implements IAtualizarUsuario {
   constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
   async atualizarUsuario(
     documento: string,

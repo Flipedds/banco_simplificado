@@ -32,31 +32,31 @@ import { redisStore } from 'cache-manager-redis-yet';
   providers: [
     AppService,
     {
-      provide: CriarUsuario,
+      provide: 'ICriarUsuario',
       useFactory: (repositorioDeUsuarios) =>
         new CriarUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios'],
     },
     {
-      provide: BuscarUsuario,
+      provide: 'IBuscarUsuario',
       useFactory: (repositorioDeUsuarios) =>
         new BuscarUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios'],
     },
     {
-      provide: ListarUsuarios,
+      provide: 'IListarUsuarios',
       useFactory: (repositorioDeUsuarios) =>
         new ListarUsuarios(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios'],
     },
     {
-      provide: RemoverUsuario,
+      provide: 'IRemoverUsuario',
       useFactory: (repositorioDeUsuarios) =>
         new RemoverUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios'],
     },
     {
-      provide: AtualizarUsuario,
+      provide: 'IAtualizarUsuario',
       useFactory: (repositorioDeUsuarios) =>
         new AtualizarUsuario(repositorioDeUsuarios),
       inject: ['IRepositorioDeUsuarios'],

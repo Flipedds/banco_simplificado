@@ -4,9 +4,10 @@ import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity'
 import { Carteira } from 'src/infra/usuarios/persistence/usuarios.carteira.entity';
 import { DadosNovoUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.novo';
 import { FabricaDeUsuarios } from 'src/domain/usuarios/usuarios.factory';
+import { ICriarUsuario } from './interfaces/usuarios.interface.criar';
 
-export class CriarUsuario {
-  constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
+export class CriarUsuario implements ICriarUsuario {
+  constructor(private readonly repositorio: IRepositorioDeUsuarios) { }
   async criarUsuario(usuario: DadosNovoUsuario): Promise<{
     novoUsuario: UsuarioEntidade;
     novaCarteira: Carteira;
