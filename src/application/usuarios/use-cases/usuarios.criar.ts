@@ -7,7 +7,7 @@ import { FabricaDeUsuarios } from 'src/domain/usuarios/usuarios.factory';
 import { ICriarUsuario } from './interfaces/usuarios.interface.criar';
 
 export class CriarUsuario implements ICriarUsuario {
-  constructor(private readonly repositorio: IRepositorioDeUsuarios) { }
+  constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
   async criarUsuario(usuario: DadosNovoUsuario): Promise<{
     novoUsuario: UsuarioEntidade;
     novaCarteira: Carteira;

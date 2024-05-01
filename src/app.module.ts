@@ -26,7 +26,7 @@ import { redisStore } from 'cache-manager-redis-yet';
         ttl: 10 * 1000,
       }),
       inject: [ConfigService],
-    })
+    }),
   ],
   controllers: [AppController, UsuariosController],
   providers: [
@@ -76,4 +76,4 @@ import { redisStore } from 'cache-manager-redis-yet';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

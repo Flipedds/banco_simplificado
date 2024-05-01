@@ -43,7 +43,7 @@ export class UsuariosController {
     @Inject('IListarUsuarios') private readonly listar: IListarUsuarios,
     @Inject('IRemoverUsuario') private readonly remover: IRemoverUsuario,
     @Inject('IAtualizarUsuario') private readonly atualizar: IAtualizarUsuario,
-  ) { }
+  ) {}
 
   @Post()
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
