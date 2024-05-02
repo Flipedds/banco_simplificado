@@ -9,7 +9,7 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmailAlreadyExist } from '../validation/users.email.validation';
 import { IsDocumentAlreadyExist } from '../validation/users.documento.validation';
-import { TipoUsuario } from 'src/domain/usuarios/usuarios.enums.tipo';
+import { TipoUsuario } from '../../../../domain/usuarios/usuarios.enums.tipo';
 
 export class DadosNovoUsuario {
   @IsNotEmpty()

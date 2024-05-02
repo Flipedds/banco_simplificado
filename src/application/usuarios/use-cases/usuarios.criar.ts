@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
 import { Carteira } from 'src/infra/usuarios/persistence/usuarios.carteira.entity';
 import { DadosNovoUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.novo';
-import { FabricaDeUsuarios } from 'src/domain/usuarios/usuarios.factory';
+import { FabricaDeUsuarios } from '../../../domain/usuarios/usuarios.factory';
 import { ICriarUsuario } from './interfaces/usuarios.interface.criar';
 
 export class CriarUsuario implements ICriarUsuario {
