@@ -71,7 +71,7 @@ export class UsuariosController {
                 tipo: usuarioCriado.novoUsuario.tipo,
               },
               carteira: {
-                id_usuario: usuarioCriado.novaCarteira.id,
+                id_usuario: usuarioCriado.novaCarteira.id_usuario,
                 saldo: usuarioCriado.novaCarteira.saldo,
                 dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
               },
