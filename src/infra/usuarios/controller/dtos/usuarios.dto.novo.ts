@@ -3,6 +3,7 @@ import {
   IsEnum,
   IsNotEmpty,
   IsStrongPassword,
+  Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
@@ -24,6 +25,7 @@ export class DadosNovoUsuario {
   @ApiProperty()
   @MinLength(11, { message: 'Documento deve ter no mínimo 11 caracteres' })
   @MaxLength(14, { message: 'Documento deve ter no máximo 14 caracteres' })
+  @Matches(/^(\d{11}|\d{14})$/, { message: 'Documento $value não aceito, apenas números 11 (cpf) ou 14 (cnpj) caracteres' })
   @IsDocumentAlreadyExist({ message: 'Documento $value já existe' })
   documento: string;
 
