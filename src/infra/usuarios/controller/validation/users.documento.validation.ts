@@ -5,14 +5,14 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Inject, Injectable } from '@nestjs/common';
-import { IUsuariosRepository } from '../domain/usuarios.interface.repository';
+import { IRepositorioDeUsuariosPrisma } from '../../persistence/usuarios.interface.repository';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
 export class UserDocumentValidation implements ValidatorConstraintInterface {
   constructor(
-    @Inject('IUsuariosRepository')
-    private readonly userRepository: IUsuariosRepository,
+    @Inject('IRepositorioDeUsuariosPrisma')
+    private readonly userRepository: IRepositorioDeUsuariosPrisma,
   ) {}
 
   async validate(value: string): Promise<boolean> {
