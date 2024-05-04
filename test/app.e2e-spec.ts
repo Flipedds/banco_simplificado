@@ -7,17 +7,33 @@ import { DadosNovoUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dt
 import { faker } from '@faker-js/faker';
 import { randomInt } from 'crypto';
 import { DadosAtualizarUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.atualizar';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
+  let token: string;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [AppModule, ConfigModule],
+      providers: [ConfigService],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
+    configService = moduleFixture.get<ConfigService>(ConfigService);
+  });
+
+  it('/autenticacao (POST)', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/autenticacao')
+      .send({
+        email: configService.get('EMAIL'),
+        senha: configService.get('SENHA'),
+      });
+    expect(response.status).toBe(200);
+    token = response.body.token;
   });
 
   it('/ (GET)', () => {
@@ -59,6 +75,7 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(201);
       expect(response.body).toEqual(retornoEsperado);
@@ -76,6 +93,7 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
@@ -101,6 +119,7 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
@@ -155,6 +174,7 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .patch(`/usuarios/${documento}`)
         .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
         .send(dadosAtualizar);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -174,9 +194,9 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .patch(`/usuarios/${documento}`)
         .set('Accept', 'application/json')
+        .set('Authorization', `Bearer ${token}`)
         .send({ email: 'starkrobert@gmail.com' });
       expect(response.status).toBe(500);
-      console.log(response.body);
       expect(response.body).toEqual({
         mensagem: 'Erro ao atualizar usuário',
         error: {
@@ -190,9 +210,10 @@ describe('AppController (e2e)', () => {
     it(`Dado que eu preecha o documento do usuário para remover
         Quando enviar a solicitação
         Então deve retornar 200 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer()).delete(
-        `/usuarios/${documento}`,
-      );
+      const response = await request(app.getHttpServer())
+        .delete(
+          `/usuarios/${documento}`,
+        ).set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         mensagem: 'Usuário removido com sucesso',
@@ -208,9 +229,10 @@ describe('AppController (e2e)', () => {
     it(`Dado que eu preecha o documento do usuário inexistente para remover
         Quando enviar a solicitação
         Então deve retornar 404 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer()).delete(
-        `/usuarios/${documento}`,
-      );
+      const response = await request(app.getHttpServer())
+        .delete(
+          `/usuarios/${documento}`,
+        ).set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(404);
       expect(response.body).toEqual({
         message: 'Usuário não encontrado',

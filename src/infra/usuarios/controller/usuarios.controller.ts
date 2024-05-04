@@ -35,7 +35,7 @@ import { IBuscarUsuario } from 'src/application/usuarios/use-cases/interfaces/us
 import { IListarUsuarios } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.listar';
 import { IRemoverUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.remover';
 import { IAtualizarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.atualizar';
-import { AutenticacaoGuard } from 'src/infra/usuarios/controller/guards/usuarios.autenticacao.guard';
+import { AutenticacaoGuard } from '../controller/guards/usuarios.autenticacao.guard';
 
 @ApiTags('Usuários')
 @Controller('usuarios')
