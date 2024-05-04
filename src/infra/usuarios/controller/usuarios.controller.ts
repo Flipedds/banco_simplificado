@@ -11,11 +11,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { DadosNovoUsuario } from './dtos/usuarios.dto.novo';
 import { UsuarioResposta } from './types/usuarios.types.resposta';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
@@ -33,6 +35,7 @@ import { IBuscarUsuario } from 'src/application/usuarios/use-cases/interfaces/us
 import { IListarUsuarios } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.listar';
 import { IRemoverUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.remover';
 import { IAtualizarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.atualizar';
+import { AutenticacaoGuard } from '../controller/guards/usuarios.autenticacao.guard';
 
 @ApiTags('Usuários')
 @Controller('usuarios')
@@ -46,6 +49,8 @@ export class UsuariosController {
   ) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(AutenticacaoGuard)
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
   @ApiCreatedResponse({ description: 'Usuário criado com sucesso' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao criar usuário' })
@@ -159,6 +164,8 @@ export class UsuariosController {
   }
 
   @Delete(':documento')
+  @UseGuards(AutenticacaoGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'documento', type: String })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao remover usuário' })
@@ -209,6 +216,8 @@ export class UsuariosController {
   }
 
   @Patch(':documento')
+  @UseGuards(AutenticacaoGuard)
+  @ApiBearerAuth()
   @HttpCode(200)
   @ApiOkResponse({ description: 'Usuário atualizado com sucesso' })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })

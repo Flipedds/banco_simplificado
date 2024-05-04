@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle('Banco Simplificado API')
     .setDescription('descrição do banco simplificado')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/api/v1/docs', app, document);

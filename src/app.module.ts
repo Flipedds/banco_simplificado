@@ -15,9 +15,23 @@ import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atua
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { redisStore } from 'cache-manager-redis-yet';
+import { AutenticacaoController } from './infra/autenticacao/controller/autenticacao.controller';
+import { RepositorioDeUsuariosAutenticacaoPrisma } from './infra/autenticacao/persistence/autenticacao.repository';
+import { RepositorioDeAutenticacao } from './infra/autenticacao/gateways/autenticacao.infra.repository';
+import { AutenticarUsuario } from './application/autenticacao/use-cases/autenticacao.autenticar';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        global: true,
+        secret: configService.get('JWT_SECRET'),
+        signOptions: { expiresIn: '10m' },
+      }),
+      inject: [ConfigService],
+    }),
     CacheModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -28,7 +42,7 @@ import { redisStore } from 'cache-manager-redis-yet';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController, UsuariosController],
+  controllers: [AppController, UsuariosController, AutenticacaoController],
   providers: [
     AppService,
     {
@@ -74,6 +88,22 @@ import { redisStore } from 'cache-manager-redis-yet';
       provide: 'IRepositorioDeUsuariosPrisma',
       useClass: RepositorioDeUsuariosPrisma,
     },
+    {
+      provide: 'IRepositorioDeUsuariosAutenticacaoPrisma',
+      useClass: RepositorioDeUsuariosAutenticacaoPrisma,
+    },
+    {
+      provide: 'IRepositorioDeAutenticacao',
+      useFactory: (repositorioDeUsuariosAutenticacaoPrisma) =>
+        new RepositorioDeAutenticacao(repositorioDeUsuariosAutenticacaoPrisma),
+      inject: ['IRepositorioDeUsuariosAutenticacaoPrisma'],
+    },
+    {
+      provide: 'IAutenticarUsuario',
+      useFactory: (repositorioDeAutenticacao, jwtService) =>
+        new AutenticarUsuario(repositorioDeAutenticacao, jwtService),
+      inject: ['IRepositorioDeAutenticacao', JwtService],
+    }
   ],
 })
-export class AppModule {}
+export class AppModule { }
