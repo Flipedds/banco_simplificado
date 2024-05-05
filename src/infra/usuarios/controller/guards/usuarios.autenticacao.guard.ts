@@ -1,6 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
+import { RequisicaoComPayload } from 'src/infra/transacoes/controller/guards/transacoes.autenticacao.guard';
+import { AutenticacaoPayload } from 'src/infra/autenticacao/controller/types/autenticacao.types.payload';
 
 @Injectable()
 export class AutenticacaoGuard implements CanActivate {
@@ -8,11 +10,12 @@ export class AutenticacaoGuard implements CanActivate {
   async canActivate(
     contexto: ExecutionContext,
   ): Promise<boolean> {
-    const requisicao: Request = contexto.switchToHttp().getRequest();
+    const requisicao: RequisicaoComPayload = contexto.switchToHttp().getRequest<RequisicaoComPayload>();
     const token: string = this.extrairTokenDoCabecalho(requisicao);
     if (!token) throw new UnauthorizedException('Este recurso requer autenticação');
     try {
-      await this.jwtService.verifyAsync(token);
+      const payload: AutenticacaoPayload = await this.jwtService.verifyAsync(token);
+      requisicao.payload = payload;
     } catch (error) {
       throw new UnauthorizedException('Jwt inválido');
     }

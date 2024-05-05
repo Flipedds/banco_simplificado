@@ -11,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -36,6 +37,7 @@ import { IListarUsuarios } from 'src/application/usuarios/use-cases/interfaces/u
 import { IRemoverUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.remover';
 import { IAtualizarUsuario } from 'src/application/usuarios/use-cases/interfaces/usuarios.interface.atualizar';
 import { AutenticacaoGuard } from '../controller/guards/usuarios.autenticacao.guard';
+import { RequisicaoComPayload } from 'src/infra/transacoes/controller/guards/transacoes.autenticacao.guard';
 
 @ApiTags('Usuários')
 @Controller('usuarios')
@@ -49,8 +51,6 @@ export class UsuariosController {
   ) {}
 
   @Post()
-  @ApiBearerAuth()
-  @UseGuards(AutenticacaoGuard)
   @ApiNotFoundResponse({ description: 'Usuário não retornado' })
   @ApiCreatedResponse({ description: 'Usuário criado com sucesso' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao criar usuário' })
@@ -94,15 +94,18 @@ export class UsuariosController {
     });
   }
 
-  @Get(':documento')
+  @Get()
   @ApiOkResponse({ description: 'Usuário encontrado com sucesso' })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao buscar usuário' })
   @UseInterceptors(CacheInterceptor)
+  @UseGuards(AutenticacaoGuard)
+  @ApiBearerAuth()
   @HttpCode(200)
   async buscarUsuarioPorDocumento(
-    @Param('documento') documento: string,
+    @Req() req: RequisicaoComPayload
   ): Promise<UsuarioResposta | NotFoundException> {
+    const documento = req.payload.sub;
     return new Promise((resolve, reject) => {
       this.buscar
         .buscarUsuario(documento)
@@ -129,7 +132,7 @@ export class UsuariosController {
     });
   }
 
-  @Get()
+  @Get('listar')
   @ApiNotFoundResponse({ description: 'Usuários não encontrados' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao listar usuários' })
   @ApiOkResponse({ description: 'Usuários listados com sucesso' })
@@ -163,17 +166,17 @@ export class UsuariosController {
     });
   }
 
-  @Delete(':documento')
+  @Delete()
   @UseGuards(AutenticacaoGuard)
   @ApiBearerAuth()
-  @ApiParam({ name: 'documento', type: String })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao remover usuário' })
   @ApiOkResponse({ description: 'Usuário removido com sucesso' })
   @HttpCode(200)
   async removerUsuario(
-    @Param('documento') documento: string,
+    @Req() req: RequisicaoComPayload
   ): Promise<UsuarioResposta | HttpException> {
+    const documento = req.payload.sub;
     return new Promise((resolve, reject) => {
       this.buscar
         .buscarUsuario(documento)
@@ -215,18 +218,18 @@ export class UsuariosController {
     });
   }
 
-  @Patch(':documento')
+  @Patch()
   @UseGuards(AutenticacaoGuard)
   @ApiBearerAuth()
   @HttpCode(200)
   @ApiOkResponse({ description: 'Usuário atualizado com sucesso' })
   @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   @ApiInternalServerErrorResponse({ description: 'Erro ao atualizar usuário' })
-  @ApiParam({ name: 'documento', type: String })
   async atualizarUsuario(
-    @Param('documento') documento: string,
+    @Req() req: RequisicaoComPayload,
     @Body() usuario: DadosAtualizarUsuario,
   ): Promise<UsuarioResposta | HttpException> {
+    const documento = req.payload.sub;
     return new Promise((resolve, reject) => {
       this.buscar
         .buscarUsuario(documento)
