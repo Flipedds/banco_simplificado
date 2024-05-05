@@ -54,6 +54,10 @@ export class CriarTransacao implements ICriarTransacao {
                         reject(new BadRequestException('Usuário de origem não encontrado'));
                         return;
                     }
+                    if (usuarioBuscado.tipo === 'LOJISTA') {
+                        reject(new BadRequestException('Usuário de origem não pode ser lojista'));
+                        return;
+                    }
                     const carteira = await this.transacoesRepositorio.buscarCarteira(usuarioBuscado.id);
                     this.transacoesRepositorio.atualizarCarteira(carteira.id, carteira.saldo + valor);
                     resolve(this.transacoesRepositorio.novaTransacao(
@@ -73,6 +77,10 @@ export class CriarTransacao implements ICriarTransacao {
                 usuarioOrigem.then(async (usuarioOrigemBuscado) => {
                     if (!usuarioOrigemBuscado) {
                         reject(new BadRequestException('Usuário de origem não encontrado'));
+                        return;
+                    }
+                    if (usuarioOrigemBuscado.tipo === 'LOJISTA') {
+                        reject(new BadRequestException('Usuário de origem não pode ser lojista'));
                         return;
                     }
                     usuarioDestino.then(async (usuarioDestinoBuscado) => {
