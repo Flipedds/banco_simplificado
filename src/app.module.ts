@@ -20,6 +20,10 @@ import { RepositorioDeUsuariosAutenticacaoPrisma } from './infra/autenticacao/pe
 import { RepositorioDeAutenticacao } from './infra/autenticacao/gateways/autenticacao.infra.repository';
 import { AutenticarUsuario } from './application/autenticacao/use-cases/autenticacao.autenticar';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { RepositorioDeTransacoesPrisma } from './infra/transacoes/persistence/transacoes.repository';
+import { RepositorioDeTransacoes } from './infra/transacoes/gateways/transacoes.infra.repository';
+import { CriarTransacao } from './application/transacoes/use-cases/transacoes.criar';
+import { TransacoesController } from './infra/transacoes/controller/transacoes.controller';
 
 @Module({
   imports: [
@@ -42,7 +46,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController, UsuariosController, AutenticacaoController],
+  controllers: [AppController, UsuariosController, AutenticacaoController, TransacoesController],
   providers: [
     AppService,
     {
@@ -103,6 +107,22 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
       useFactory: (repositorioDeAutenticacao, jwtService) =>
         new AutenticarUsuario(repositorioDeAutenticacao, jwtService),
       inject: ['IRepositorioDeAutenticacao', JwtService],
+    },
+    {
+      provide: 'IRepositorioDeTransacoesPrisma',
+      useClass: RepositorioDeTransacoesPrisma,
+    },
+    {
+      provide: 'IRepositorioDeTransacoes',
+      useFactory: (repositorioDeTransacoesPrisma) =>
+        new RepositorioDeTransacoes(repositorioDeTransacoesPrisma),
+      inject: ['IRepositorioDeTransacoesPrisma'],
+    },
+    {
+      provide: 'ICriarTransacao',
+      useFactory: (repositorioDeTransacoes) =>
+        new CriarTransacao(repositorioDeTransacoes),
+      inject: ['IRepositorioDeTransacoes'],
     }
   ],
 })
