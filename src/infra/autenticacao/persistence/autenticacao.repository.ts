@@ -9,7 +9,7 @@ export class RepositorioDeUsuariosAutenticacaoPrisma
     constructor(private readonly prisma: PrismaClient) { }
 
     async buscarPorEmail(email: string): Promise<UsuarioAutenticacao | null> {
-        return await this.prisma.tb_usuario_autenticacao.findFirst({
+        return await this.prisma.tb_usuario.findFirst({
             where: {
                 email: email,
             },

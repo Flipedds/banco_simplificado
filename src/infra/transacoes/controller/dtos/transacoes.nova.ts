@@ -3,17 +3,6 @@ import { IsEnum, IsNotEmpty, IsOptional, Matches, MaxLength, Min, MinLength } fr
 import { TipoTransacao } from "../../../../domain/transacoes/transacoes.enums.tipo";
 
 export class DadosNovaTransacao {
-
-    @IsNotEmpty()
-    @ApiProperty()
-    @Matches(/^(\d{11}|\d{14})$/, {
-        message:
-          'Documento carteira origem $value não aceito, apenas números 11 (cpf) ou 14 (cnpj) caracteres',
-      })
-    @MinLength(11, { message: 'Documento deve ter no mínimo 11 caracteres' })
-    @MaxLength(14, { message: 'Documento deve ter no máximo 14 caracteres' })
-    documentoCarteiraOrigem: string;
-
     @IsNotEmpty()
     @ApiProperty()
     @IsOptional()

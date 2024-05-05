@@ -4,12 +4,15 @@ import { BadRequestException, InternalServerErrorException } from "@nestjs/commo
 import { FabricaDeTransacoes } from "src/domain/transacoes/transacoes.factory";
 import { TransacaoEntidade } from "src/infra/transacoes/persistence/transacoes.entity";
 import { ICriarTransacao } from "./interfaces/transacoes.interface.criar";
+import { AutenticacaoPayload } from "src/infra/autenticacao/controller/types/autenticacao.types.payload";
 
 export class CriarTransacao implements ICriarTransacao {
     constructor(private transacoesRepositorio: IRepositorioDeTransacoes) { }
 
-    public async executar(dadosNovaTransacao: DadosNovaTransacao): Promise<TransacaoEntidade | null> {
-        const { documentoCarteiraOrigem, documentoCarteiraDestino, tipo, valor } = dadosNovaTransacao;
+    public async executar(req: AutenticacaoPayload,dadosNovaTransacao: DadosNovaTransacao): Promise<TransacaoEntidade | null> {
+        const { sub } = req;
+        const documentoCarteiraOrigem = sub;
+        const { documentoCarteiraDestino, tipo, valor } = dadosNovaTransacao;
         return new Promise((resolve, reject) => {
             if (documentoCarteiraOrigem === documentoCarteiraDestino && tipo === 'TRANSFERENCIA') {
                 reject(new BadRequestException('Documento de origem e destino não podem ser iguais'));

@@ -20,7 +20,7 @@ export class AutenticarUsuario implements IAutenticarUsuario {
                         reject(new BadRequestException("Email ou senha inválidos"));
                     }
                     const payload: AutenticacaoPayload = {
-                        sub: usuario.email,
+                        sub: usuario.documento,
                         nome: usuario.nome_completo,
                     }
                     resolve({ token: await this.jwtService.signAsync(payload) });
