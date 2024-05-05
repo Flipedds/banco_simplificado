@@ -4,11 +4,11 @@ import { Carteira } from 'src/infra/usuarios/persistence/usuarios.carteira.entit
 import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
 
 export interface IRepositorioDeUsuarios {
-  cadastrarUsuario(
+  cadastrar(
     usuario: Usuario,
   ): Promise<{ novoUsuario: UsuarioEntidade; novaCarteira: Carteira }>;
-  buscarUsuario(documento: string): Promise<UsuarioEntidade | null>;
-  listarUsuarios(): Promise<UsuarioEntidade[]>;
+  buscar(documento: string): Promise<UsuarioEntidade | null>;
+  listar(): Promise<UsuarioEntidade[]>;
   remover(documento: string): Promise<UsuarioEntidade>;
   atualizar(
     documento: string,

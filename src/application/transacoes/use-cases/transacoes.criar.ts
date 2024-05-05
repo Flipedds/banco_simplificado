@@ -1,7 +1,7 @@
 import { DadosNovaTransacao } from "src/infra/transacoes/controller/dtos/transacoes.nova";
 import { IRepositorioDeTransacoes } from "../gateways/transacoes.interface";
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
-import { FabricaDeTransacoes } from "src/domain/transacoes/transacoes.factory";
+import { FabricaDeTransacoes } from "../../../domain/transacoes/transacoes.factory";
 import { TransacaoEntidade } from "src/infra/transacoes/persistence/transacoes.entity";
 import { ICriarTransacao } from "./interfaces/transacoes.interface.criar";
 import { AutenticacaoPayload } from "src/infra/autenticacao/controller/types/autenticacao.types.payload";

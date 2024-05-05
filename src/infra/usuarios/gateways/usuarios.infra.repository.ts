@@ -16,13 +16,13 @@ export class RepositorioDeUsuarios implements IRepositorioDeUsuarios {
   remover(documento: string): Promise<UsuarioEntidade> {
     return this.repositorio.remover(documento);
   }
-  listarUsuarios(): Promise<UsuarioEntidade[]> {
+  listar(): Promise<UsuarioEntidade[]> {
     return this.repositorio.listar();
   }
-  buscarUsuario(documento: string): Promise<UsuarioEntidade | null> {
+  buscar(documento: string): Promise<UsuarioEntidade | null> {
     return this.repositorio.buscarPorDocumento(documento);
   }
-  cadastrarUsuario(
+  cadastrar(
     usuario: Usuario,
   ): Promise<{ novoUsuario: UsuarioEntidade; novaCarteira: Carteira }> {
     return this.repositorio.criar(usuario);

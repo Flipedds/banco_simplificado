@@ -5,6 +5,6 @@ import { IBuscarUsuario } from './interfaces/usuarios.interface.buscar';
 export class BuscarUsuario implements IBuscarUsuario {
   constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
   async buscarUsuario(documento: string): Promise<UsuarioEntidade | null> {
-    return this.repositorio.buscarUsuario(documento);
+    return this.repositorio.buscar(documento);
   }
 }
