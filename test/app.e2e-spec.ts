@@ -131,8 +131,8 @@ describe('AppController (e2e)', () => {
     it(`Dado que eu pesquise os dados do usuário
         Quando enviar a solicitação 
         Então deve retornar 200 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer()).get(
-        `/usuarios`)
+      const response = await request(app.getHttpServer())
+        .get(`/usuarios`)
         .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -192,9 +192,8 @@ describe('AppController (e2e)', () => {
         Quando enviar a solicitação
         Então deve retornar 200 e o retorno esperado`, async () => {
       const response = await request(app.getHttpServer())
-        .delete(
-          `/usuarios`,
-        ).set('Authorization', `Bearer ${token}`);
+        .delete(`/usuarios`)
+        .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         mensagem: 'Usuário removido com sucesso',

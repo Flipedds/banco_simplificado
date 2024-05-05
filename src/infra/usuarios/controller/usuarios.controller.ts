@@ -8,7 +8,6 @@ import {
   Inject,
   InternalServerErrorException,
   NotFoundException,
-  Param,
   Patch,
   Post,
   Req,
@@ -23,7 +22,6 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
 import { UsuarioEntidade } from '../persistence/usuarios.entity';
@@ -103,7 +101,7 @@ export class UsuariosController {
   @ApiBearerAuth()
   @HttpCode(200)
   async buscarUsuarioPorDocumento(
-    @Req() req: RequisicaoComPayload
+    @Req() req: RequisicaoComPayload,
   ): Promise<UsuarioResposta | NotFoundException> {
     const documento = req.payload.sub;
     return new Promise((resolve, reject) => {
@@ -174,7 +172,7 @@ export class UsuariosController {
   @ApiOkResponse({ description: 'Usuário removido com sucesso' })
   @HttpCode(200)
   async removerUsuario(
-    @Req() req: RequisicaoComPayload
+    @Req() req: RequisicaoComPayload,
   ): Promise<UsuarioResposta | HttpException> {
     const documento = req.payload.sub;
     return new Promise((resolve, reject) => {

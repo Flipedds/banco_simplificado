@@ -46,7 +46,12 @@ import { TransacoesController } from './infra/transacoes/controller/transacoes.c
       inject: [ConfigService],
     }),
   ],
-  controllers: [AppController, UsuariosController, AutenticacaoController, TransacoesController],
+  controllers: [
+    AppController,
+    UsuariosController,
+    AutenticacaoController,
+    TransacoesController,
+  ],
   providers: [
     AppService,
     {
@@ -123,7 +128,7 @@ import { TransacoesController } from './infra/transacoes/controller/transacoes.c
       useFactory: (repositorioDeTransacoes) =>
         new CriarTransacao(repositorioDeTransacoes),
       inject: ['IRepositorioDeTransacoes'],
-    }
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

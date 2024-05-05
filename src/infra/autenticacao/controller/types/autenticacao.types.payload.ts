@@ -1,4 +1,4 @@
 export type AutenticacaoPayload = {
-    sub: string,
-    nome: string,
+  sub: string;
+  nome: string;
 };
