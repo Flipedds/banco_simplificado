@@ -1,5 +1,5 @@
-import { UsuarioAutenticacao } from "src/infra/autenticacao/persistence/autenticacao.entity";
+import { UsuarioAutenticacao } from 'src/infra/autenticacao/persistence/autenticacao.entity';
 
 export interface IRepositorioDeAutenticacao {
-    buscarUsuario(email: string): Promise<UsuarioAutenticacao | null>;
+  buscarUsuario(email: string): Promise<UsuarioAutenticacao | null>;
 }

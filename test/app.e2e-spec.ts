@@ -7,33 +7,20 @@ import { DadosNovoUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dt
 import { faker } from '@faker-js/faker';
 import { randomInt } from 'crypto';
 import { DadosAtualizarUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.atualizar';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let token: string;
-  let configService: ConfigService;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, ConfigModule],
-      providers: [ConfigService],
+      providers: [],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     await app.init();
-    configService = moduleFixture.get<ConfigService>(ConfigService);
-  });
-
-  it('/autenticacao (POST)', async () => {
-    const response = await request(app.getHttpServer())
-      .post('/autenticacao')
-      .send({
-        email: configService.get('EMAIL'),
-        senha: configService.get('SENHA'),
-      });
-    expect(response.status).toBe(200);
-    token = response.body.token;
   });
 
   it('/ (GET)', () => {
@@ -75,10 +62,20 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
-        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(201);
       expect(response.body).toEqual(retornoEsperado);
+    });
+
+    it('/autenticacao (POST)', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/autenticacao')
+        .send({
+          email: email,
+          senha: senha,
+        });
+      expect(response.status).toBe(200);
+      token = response.body.token;
     });
 
     it(`Dado que eu preencha os dados do usuário com email já cadastrado
@@ -93,7 +90,6 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
-        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
@@ -119,7 +115,6 @@ describe('AppController (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/usuarios')
         .set('Accept', 'application/json')
-        .set('Authorization', `Bearer ${token}`)
         .send(usuario);
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
@@ -133,12 +128,12 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    it(`Dado que eu pesquise um usuário pelo documento
+    it(`Dado que eu pesquise os dados do usuário
         Quando enviar a solicitação 
         Então deve retornar 200 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer()).get(
-        `/usuarios/${documento}`,
-      );
+      const response = await request(app.getHttpServer())
+        .get(`/usuarios`)
+        .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         mensagem: 'Usuário encontrado com sucesso',
@@ -151,20 +146,6 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    it(`Dado que eu pesquise um usuário pelo documento inexistente
-        Quando enviar a solicitação 
-        Então deve retornar 404 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer()).get(
-        `/usuarios/${'99999999999'.toString()}`,
-      );
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({
-        message: 'Usuário não encontrado',
-        error: 'Not Found',
-        statusCode: 404,
-      });
-    });
-
     it(`Dado que eu preencha os dados do usuário para atualizar corretamente
         Quando enviar a solicitação
         Então deve retornar 200 e o retorno esperado`, async () => {
@@ -172,7 +153,7 @@ describe('AppController (e2e)', () => {
         email: faker.internet.email(),
       };
       const response = await request(app.getHttpServer())
-        .patch(`/usuarios/${documento}`)
+        .patch(`/usuarios`)
         .set('Accept', 'application/json')
         .set('Authorization', `Bearer ${token}`)
         .send(dadosAtualizar);
@@ -192,10 +173,10 @@ describe('AppController (e2e)', () => {
         Quando enviar a solicitação
         Então deve retornar 500 e o retorno esperado`, async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/usuarios/${documento}`)
+        .patch(`/usuarios`)
         .set('Accept', 'application/json')
         .set('Authorization', `Bearer ${token}`)
-        .send({ email: 'starkrobert@gmail.com' });
+        .send({ email: 'starkroberto@gmail.com' });
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
         mensagem: 'Erro ao atualizar usuário',
@@ -211,9 +192,8 @@ describe('AppController (e2e)', () => {
         Quando enviar a solicitação
         Então deve retornar 200 e o retorno esperado`, async () => {
       const response = await request(app.getHttpServer())
-        .delete(
-          `/usuarios/${documento}`,
-        ).set('Authorization', `Bearer ${token}`);
+        .delete(`/usuarios`)
+        .set('Authorization', `Bearer ${token}`);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         mensagem: 'Usuário removido com sucesso',
@@ -223,21 +203,6 @@ describe('AppController (e2e)', () => {
           email: expect.any(String),
           tipo: 'COMUM',
         },
-      });
-    });
-
-    it(`Dado que eu preecha o documento do usuário inexistente para remover
-        Quando enviar a solicitação
-        Então deve retornar 404 e o retorno esperado`, async () => {
-      const response = await request(app.getHttpServer())
-        .delete(
-          `/usuarios/${documento}`,
-        ).set('Authorization', `Bearer ${token}`);
-      expect(response.status).toBe(404);
-      expect(response.body).toEqual({
-        message: 'Usuário não encontrado',
-        error: 'Not Found',
-        statusCode: 404,
       });
     });
   });

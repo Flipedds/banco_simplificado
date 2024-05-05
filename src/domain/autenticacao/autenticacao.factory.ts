@@ -1,4 +1,4 @@
-import { Autenticacao } from "./autenticacao";
+import { Autenticacao } from './autenticacao';
 
 export class FabricaDeAutenticacao {
   public static comEmailESenha(email: string, senha: string): Autenticacao {

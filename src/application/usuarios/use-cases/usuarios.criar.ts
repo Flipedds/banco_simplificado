@@ -24,6 +24,6 @@ export class CriarUsuario implements ICriarUsuario {
       usuarioDeDominio.getSenha,
       10,
     );
-    return this.repositorio.cadastrarUsuario(usuarioDeDominio);
+    return this.repositorio.cadastrar(usuarioDeDominio);
   }
 }

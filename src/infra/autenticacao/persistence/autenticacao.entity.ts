@@ -1,6 +1,8 @@
 export class UsuarioAutenticacao {
-    id: number;
-    nome_completo: string;
-    email: string;
-    senha: string;
+  id: number;
+  tipo: string;
+  nome_completo: string;
+  documento: string;
+  email: string;
+  senha: string;
 }
