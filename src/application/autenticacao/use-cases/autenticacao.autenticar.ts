@@ -34,6 +34,7 @@ export class AutenticarUsuario implements IAutenticarUsuario {
             !bcrypt.compareSync(autenticacao.getSenha(), usuario.senha)
           ) {
             reject(new BadRequestException('Email ou senha inválidos'));
+            return;
           }
           const payload: AutenticacaoPayload = {
             sub: usuario.documento,

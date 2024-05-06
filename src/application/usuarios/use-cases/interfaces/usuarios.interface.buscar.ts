@@ -1,5 +1,5 @@
-import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
+import { UsuarioResposta } from 'src/infra/usuarios/controller/types/usuarios.types.resposta';
 
 export interface IBuscarUsuario {
-  buscarUsuario(documento: string): Promise<UsuarioEntidade | null>;
+  buscarUsuario(documento: string): Promise<UsuarioResposta | null>;
 }

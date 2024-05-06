@@ -1,9 +1,10 @@
+import { HttpException } from '@nestjs/common';
 import { DadosAtualizarUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.atualizar';
-import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
+import { UsuarioResposta } from 'src/infra/usuarios/controller/types/usuarios.types.resposta';
 
 export interface IAtualizarUsuario {
   atualizarUsuario(
     documento: string,
     dados: DadosAtualizarUsuario,
-  ): Promise<UsuarioEntidade>;
+  ): Promise<UsuarioResposta | HttpException>;
 }
