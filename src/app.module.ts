@@ -14,7 +14,6 @@ import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remove
 import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atualizar';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { redisStore } from 'cache-manager-redis-yet';
 import { AutenticacaoController } from './infra/autenticacao/controller/autenticacao.controller';
 import { RepositorioDeUsuariosAutenticacaoPrisma } from './infra/autenticacao/persistence/autenticacao.repository';
 import { RepositorioDeAutenticacao } from './infra/autenticacao/gateways/autenticacao.infra.repository';
@@ -36,15 +35,7 @@ import { TransacoesController } from './infra/transacoes/controller/transacoes.c
       }),
       inject: [ConfigService],
     }),
-    CacheModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        store: redisStore,
-        url: configService.get('REDIS_URL'),
-        ttl: 10 * 1000,
-      }),
-      inject: [ConfigService],
-    }),
+    CacheModule.register({ isGlobal: true, ttl: 10000 }),
   ],
   controllers: [
     AppController,
@@ -131,4 +122,4 @@ import { TransacoesController } from './infra/transacoes/controller/transacoes.c
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }
