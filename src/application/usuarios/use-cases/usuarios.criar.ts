@@ -5,13 +5,12 @@ import { Carteira } from 'src/infra/usuarios/persistence/usuarios.carteira.entit
 import { DadosNovoUsuario } from 'src/infra/usuarios/controller/dtos/usuarios.dto.novo';
 import { FabricaDeUsuarios } from '../../../domain/usuarios/usuarios.factory';
 import { ICriarUsuario } from './interfaces/usuarios.interface.criar';
+import { UsuarioResposta } from 'src/infra/usuarios/controller/types/usuarios.types.resposta';
+import { HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 export class CriarUsuario implements ICriarUsuario {
-  constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
-  async criarUsuario(usuario: DadosNovoUsuario): Promise<{
-    novoUsuario: UsuarioEntidade;
-    novaCarteira: Carteira;
-  }> {
+  constructor(private readonly repositorio: IRepositorioDeUsuarios) { }
+  async criarUsuario(usuario: DadosNovoUsuario): Promise<UsuarioResposta | HttpException> {
     const usuarioDeDominio =
       FabricaDeUsuarios.comTipoNomeCompletoDocumentoEmailESenha(
         usuario.tipo,
@@ -24,6 +23,39 @@ export class CriarUsuario implements ICriarUsuario {
       usuarioDeDominio.getSenha,
       10,
     );
-    return this.repositorio.cadastrar(usuarioDeDominio);
+    return new Promise((resolve, reject) => {
+      this.repositorio.cadastrar(usuarioDeDominio)
+        .then(
+          (usuarioCriado: {
+            novoUsuario: UsuarioEntidade;
+            novaCarteira: Carteira;
+          }) => {
+            if (!usuarioCriado)
+              reject(new NotFoundException('Usuário não retornado'));
+            resolve({
+              mensagem: 'Usuário criado com sucesso',
+              usuario: {
+                id: usuarioCriado.novoUsuario.id,
+                nome_completo: usuarioCriado.novoUsuario.nome_completo,
+                email: usuarioCriado.novoUsuario.email,
+                tipo: usuarioCriado.novoUsuario.tipo,
+              },
+              carteira: {
+                id_usuario: usuarioCriado.novaCarteira.id_usuario,
+                saldo: usuarioCriado.novaCarteira.saldo,
+                dt_criacao: usuarioCriado.novaCarteira.dt_criacao,
+              },
+            });
+          },
+        )
+        .catch((error) => {
+          reject(
+            new InternalServerErrorException({
+              mensagem: 'Erro ao criar usuário',
+              error: error,
+            }),
+          );
+        });
+    });
   }
 }

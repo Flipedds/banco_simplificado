@@ -1,5 +1,6 @@
-import { UsuarioEntidade } from 'src/infra/usuarios/persistence/usuarios.entity';
+import { HttpException } from '@nestjs/common';
+import { UsuarioSeguro } from 'src/infra/usuarios/controller/types/usuarios.types.seguro';
 
 export interface IListarUsuarios {
-  listarUsuarios(): Promise<UsuarioEntidade[]>;
+  listarUsuarios(): Promise<UsuarioSeguro[] | HttpException>;
 }
