@@ -30,8 +30,10 @@ export class CriarUsuario implements ICriarUsuario {
             novoUsuario: UsuarioEntidade;
             novaCarteira: Carteira;
           }) => {
-            if (!usuarioCriado)
+            if (!usuarioCriado) {
               reject(new NotFoundException('Usuário não retornado'));
+              return;
+            }
             resolve({
               mensagem: 'Usuário criado com sucesso',
               usuario: {

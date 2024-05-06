@@ -10,12 +10,16 @@ export class RemoverUsuario implements IRemoverUsuario {
     return new Promise((resolve, reject) => {
       this.repositorio.buscar(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado)
+          if (!usuarioBuscado) {
             reject(new NotFoundException('Usuário não encontrado'));
+            return;
+          }
           this.repositorio.remover(documento)
             .then((usuario: UsuarioEntidade) => {
-              if (!usuario)
+              if (!usuario) {
                 reject(new NotFoundException('Usuário não retornado'));
+                return;
+              }
               resolve({
                 mensagem: 'Usuário removido com sucesso',
                 usuario: {

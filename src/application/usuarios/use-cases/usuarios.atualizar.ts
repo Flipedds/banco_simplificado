@@ -17,12 +17,16 @@ export class AtualizarUsuario implements IAtualizarUsuario {
       this.repositorio
         .buscar(documento)
         .then(async (usuarioBuscado: UsuarioEntidade) => {
-          if (!usuarioBuscado)
+          if (!usuarioBuscado) {
             reject(new NotFoundException('Usuário não encontrado'));
+            return;
+          }
           this.repositorio.atualizar(documento, dados)
             .then((usuarioAtualizado: UsuarioEntidade) => {
-              if (!usuarioAtualizado)
+              if (!usuarioAtualizado){
                 reject(new NotFoundException('Usuário não retornado'));
+                return;
+              }
               resolve({
                 mensagem: 'Usuário atualizado com sucesso',
                 usuario: {

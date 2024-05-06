@@ -5,12 +5,15 @@ import { UsuarioResposta } from 'src/infra/usuarios/controller/types/usuarios.ty
 import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 
 export class BuscarUsuario implements IBuscarUsuario {
-  constructor(private readonly repositorio: IRepositorioDeUsuarios) {}
+  constructor(private readonly repositorio: IRepositorioDeUsuarios) { }
   async buscarUsuario(documento: string): Promise<UsuarioResposta | null> {
     return new Promise((resolve, reject) => {
       this.repositorio.buscar(documento)
         .then((usuario: UsuarioEntidade) => {
-          if (!usuario) reject(new NotFoundException('Usuário não encontrado'));
+          if (!usuario) {
+            reject(new NotFoundException('Usuário não encontrado'));
+            return;
+          }
           resolve({
             mensagem: 'Usuário encontrado com sucesso',
             usuario: {
