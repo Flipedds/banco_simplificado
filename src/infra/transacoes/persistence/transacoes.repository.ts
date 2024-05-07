@@ -8,9 +8,31 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class RepositorioDeTransacoesPrisma
-  implements IRepositorioDeTransacoesPrisma
-{
-  constructor(private readonly prisma: PrismaClient) {}
+  implements IRepositorioDeTransacoesPrisma {
+  constructor(private readonly prisma: PrismaClient) { }
+  async buscarPorId(id: number): Promise<UsuarioEntidade> {
+    return await this.prisma.tb_usuario.findFirst({
+      where: {
+        id: id,
+      },
+    });
+  }
+
+  async listar(id_carteira: number): Promise<TransacaoEntidade[]> {
+    return await this.prisma.tb_transacao.findMany({
+      where: {
+        OR: [
+          {
+            id_origem: id_carteira,
+          },
+          {
+            id_destino: id_carteira,
+          },
+        ],
+      }
+    });
+  }
+
 
   async atualizarCarteira(id: number, valor: number): Promise<void> {
     await this.prisma.tb_carteira.update({

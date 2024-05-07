@@ -8,4 +8,6 @@ export interface IRepositorioDeTransacoesPrisma {
   buscarCarteira(idUsuario: number): Promise<Carteira>;
   novaTransacao(transacao: Transacao): Promise<TransacaoEntidade | null>;
   atualizarCarteira(idUsuario: number, valor: number): Promise<void>;
+  listar(id_carteira: number): Promise<TransacaoEntidade[]>;
+  buscarPorId(id: number): Promise<UsuarioEntidade | null>;
 }
