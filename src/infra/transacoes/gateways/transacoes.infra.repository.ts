@@ -7,6 +7,12 @@ import { IRepositorioDeTransacoesPrisma } from '../persistence/transacoes.interf
 
 export class RepositorioDeTransacoes implements IRepositorioDeTransacoes {
   constructor(private readonly repositorio: IRepositorioDeTransacoesPrisma) {}
+  buscarUsuarioPorId(id: number): Promise<UsuarioEntidade> {
+    return this.repositorio.buscarPorId(id);
+  }
+  listarTransacoes(id_carteira: number): Promise<TransacaoEntidade[]> {
+    return this.repositorio.listar(id_carteira);
+  }
   buscarUsuario(documento: string): Promise<UsuarioEntidade> {
     return this.repositorio.buscarPorDocumento(documento);
   }

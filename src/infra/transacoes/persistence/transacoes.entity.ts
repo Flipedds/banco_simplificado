@@ -4,4 +4,5 @@ export class TransacaoEntidade {
   id_destino: number;
   valor: number;
   tipo: string;
+  dt_criacao: Date;
 }

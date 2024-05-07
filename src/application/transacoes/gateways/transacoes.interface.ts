@@ -8,4 +8,6 @@ export interface IRepositorioDeTransacoes {
   buscarCarteira(id_cliente: number): Promise<Carteira | null>;
   atualizarCarteira(id_cliente: number, valor: number): Promise<void>;
   novaTransacao(transacao: Transacao): Promise<TransacaoEntidade | null>;
+  listarTransacoes(id_carteira: number): Promise<TransacaoEntidade[]>;
+  buscarUsuarioPorId(id: number): Promise<UsuarioEntidade | null>;
 }

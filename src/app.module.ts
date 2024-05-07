@@ -23,6 +23,7 @@ import { RepositorioDeTransacoesPrisma } from './infra/transacoes/persistence/tr
 import { RepositorioDeTransacoes } from './infra/transacoes/gateways/transacoes.infra.repository';
 import { CriarTransacao } from './application/transacoes/use-cases/transacoes.criar';
 import { TransacoesController } from './infra/transacoes/controller/transacoes.controller';
+import { ListarTransacoes } from './application/transacoes/use-cases/transacoes.listar';
 
 @Module({
   imports: [
@@ -120,6 +121,12 @@ import { TransacoesController } from './infra/transacoes/controller/transacoes.c
         new CriarTransacao(repositorioDeTransacoes),
       inject: ['IRepositorioDeTransacoes'],
     },
+    {
+      provide: 'IListarTransacoes',
+      useFactory: (repositorioDeTransacoes) =>
+        new ListarTransacoes(repositorioDeTransacoes),
+      inject: ['IRepositorioDeTransacoes'],
+    }
   ],
 })
 export class AppModule { }
