@@ -1,29 +1,28 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaClient } from '@prisma/client';
-import { CriarUsuario } from './application/usuarios/use-cases/usuarios.criar';
-import { UsuariosController } from './infra/usuarios/controller/usuarios.controller';
-import { UserDocumentValidation } from './infra/usuarios/controller/validation/users.documento.validation';
-import { UserEmailValidation } from './infra/usuarios/controller/validation/users.email.validation';
-import { RepositorioDeUsuariosPrisma } from './infra/usuarios/persistence/usuarios.repository';
-import { RepositorioDeUsuarios } from './infra/usuarios/gateways/usuarios.infra.repository';
-import { BuscarUsuario } from './application/usuarios/use-cases/usuarios.buscar';
-import { ListarUsuarios } from './application/usuarios/use-cases/usuarios.listar';
-import { RemoverUsuario } from './application/usuarios/use-cases/usuarios.remover';
-import { AtualizarUsuario } from './application/usuarios/use-cases/usuarios.atualizar';
+import { CriarUsuario } from '../../application/usuarios/use-cases/usuarios.criar';
+import { UsuariosController } from '../usuarios/controller/usuarios.controller';
+import { UserDocumentValidation } from '../usuarios/controller/validation/users.documento.validation';
+import { UserEmailValidation } from '../usuarios/controller/validation/users.email.validation';
+import { RepositorioDeUsuariosPrisma } from '../usuarios/persistence/usuarios.repository';
+import { RepositorioDeUsuarios } from '../usuarios/gateways/usuarios.infra.repository';
+import { BuscarUsuario } from '../../application/usuarios/use-cases/usuarios.buscar';
+import { ListarUsuarios } from '../../application/usuarios/use-cases/usuarios.listar';
+import { RemoverUsuario } from '../../application/usuarios/use-cases/usuarios.remover';
+import { AtualizarUsuario } from '../../application/usuarios/use-cases/usuarios.atualizar';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AutenticacaoController } from './infra/autenticacao/controller/autenticacao.controller';
-import { RepositorioDeUsuariosAutenticacaoPrisma } from './infra/autenticacao/persistence/autenticacao.repository';
-import { RepositorioDeAutenticacao } from './infra/autenticacao/gateways/autenticacao.infra.repository';
-import { AutenticarUsuario } from './application/autenticacao/use-cases/autenticacao.autenticar';
+import { AutenticacaoController } from '../autenticacao/controller/autenticacao.controller';
+import { RepositorioDeUsuariosAutenticacaoPrisma } from '../autenticacao/persistence/autenticacao.repository';
+import { RepositorioDeAutenticacao } from '../autenticacao/gateways/autenticacao.infra.repository';
+import { AutenticarUsuario } from '../../application/autenticacao/use-cases/autenticacao.autenticar';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { RepositorioDeTransacoesPrisma } from './infra/transacoes/persistence/transacoes.repository';
-import { RepositorioDeTransacoes } from './infra/transacoes/gateways/transacoes.infra.repository';
-import { CriarTransacao } from './application/transacoes/use-cases/transacoes.criar';
-import { TransacoesController } from './infra/transacoes/controller/transacoes.controller';
-import { ListarTransacoes } from './application/transacoes/use-cases/transacoes.listar';
+import { RepositorioDeTransacoesPrisma } from '../transacoes/persistence/transacoes.repository';
+import { RepositorioDeTransacoes } from '../transacoes/gateways/transacoes.infra.repository';
+import { CriarTransacao } from '../../application/transacoes/use-cases/transacoes.criar';
+import { TransacoesController } from '../transacoes/controller/transacoes.controller';
+import { ListarTransacoes } from '../../application/transacoes/use-cases/transacoes.listar';
 
 @Module({
   imports: [
@@ -45,7 +44,6 @@ import { ListarTransacoes } from './application/transacoes/use-cases/transacoes.
     TransacoesController,
   ],
   providers: [
-    AppService,
     {
       provide: 'ICriarUsuario',
       useFactory: (repositorioDeUsuarios) =>
