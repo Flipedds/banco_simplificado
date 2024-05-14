@@ -19,7 +19,7 @@ export class RepositorioDeUsuarios implements IRepositorioDeUsuarios {
   listar(): Promise<UsuarioEntidade[]> {
     return this.repositorio.listar();
   }
-  buscar(documento: string): Promise<UsuarioEntidade | null> {
+  buscar(documento: string): Promise<{ usuario: UsuarioEntidade; carteira: Carteira; }> {
     return this.repositorio.buscarPorDocumento(documento);
   }
   cadastrar(

@@ -27,12 +27,22 @@ export class RepositorioDeUsuariosPrisma
       },
     });
   }
-  async buscarPorDocumento(documento: string): Promise<UsuarioEntidade | null> {
-    return await this.prisma.tb_usuario.findFirst({
+  async buscarPorDocumento(documento: string): Promise<{
+    usuario: UsuarioEntidade;
+    carteira: Carteira;
+  }> {
+    const usuario: UsuarioEntidade = await this.prisma.tb_usuario.findFirst({
       where: {
         documento: documento,
       },
     });
+    const carteira: Carteira = await this.prisma.tb_carteira.findFirst({
+      where: {
+        id_usuario: usuario.id,
+      },
+    });
+
+    return { usuario, carteira };
   }
 
   async criar(usuario: Usuario): Promise<{

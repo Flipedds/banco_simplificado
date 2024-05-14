@@ -143,6 +143,11 @@ describe('AppController (e2e)', () => {
           email: email,
           tipo: 'COMUM',
         },
+        carteira: {
+          saldo: 0,
+          id_usuario: expect.any(Number),
+          dt_criacao: expect.any(String),
+        }
       });
     });
 
@@ -176,7 +181,7 @@ describe('AppController (e2e)', () => {
         .patch(`/usuarios`)
         .set('Accept', 'application/json')
         .set('Authorization', `Bearer ${token}`)
-        .send({ email: 'starkroberto@gmail.com' });
+        .send({ email: 'joaodesouza@gmail.com' });
       expect(response.status).toBe(500);
       expect(response.body).toEqual({
         mensagem: 'Erro ao atualizar usuário',

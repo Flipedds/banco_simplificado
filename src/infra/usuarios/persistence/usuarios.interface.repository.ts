@@ -5,7 +5,7 @@ import { Usuario } from 'src/domain/usuarios/usuarios';
 
 export interface IRepositorioDeUsuariosPrisma {
   buscarPorEmail(email: string): Promise<UsuarioEntidade | null>;
-  buscarPorDocumento(documento: string): Promise<UsuarioEntidade | null>;
+  buscarPorDocumento(documento: string): Promise<{ usuario: UsuarioEntidade; carteira: Carteira; }>;
   criar(
     usuario: Usuario,
   ): Promise<{ novoUsuario: UsuarioEntidade; novaCarteira: Carteira }>;

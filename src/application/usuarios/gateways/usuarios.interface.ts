@@ -7,7 +7,7 @@ export interface IRepositorioDeUsuarios {
   cadastrar(
     usuario: Usuario,
   ): Promise<{ novoUsuario: UsuarioEntidade; novaCarteira: Carteira }>;
-  buscar(documento: string): Promise<UsuarioEntidade | null>;
+  buscar(documento: string): Promise<{ usuario: UsuarioEntidade; carteira: Carteira; }>;
   listar(): Promise<UsuarioEntidade[]>;
   remover(documento: string): Promise<UsuarioEntidade>;
   atualizar(
