@@ -41,8 +41,15 @@ export class RepositorioDeUsuariosPrisma
         id_usuario: usuario.id,
       },
     });
-
     return { usuario, carteira };
+  }
+
+  async buscarPorDocumentoValidacao(documento: string): Promise<UsuarioEntidade | null> {
+    return await this.prisma.tb_usuario.findFirst({
+      where: {
+        documento: documento,
+      },
+    });
   }
 
   async criar(usuario: Usuario): Promise<{

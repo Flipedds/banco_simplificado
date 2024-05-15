@@ -16,7 +16,7 @@ export class UserDocumentValidation implements ValidatorConstraintInterface {
   ) {}
 
   async validate(value: string): Promise<boolean> {
-    return this.userRepository.buscarPorDocumento(value).then((user) => {
+    return this.userRepository.buscarPorDocumentoValidacao(value).then((user) => {
       return !user;
     });
   }

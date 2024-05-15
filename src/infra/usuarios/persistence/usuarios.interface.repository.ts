@@ -15,4 +15,5 @@ export interface IRepositorioDeUsuariosPrisma {
   ): Promise<UsuarioEntidade>;
   remover(documento: string): Promise<UsuarioEntidade>;
   listar(): Promise<UsuarioEntidade[]>;
+  buscarPorDocumentoValidacao(documento: string): Promise<UsuarioEntidade | null>;
 }
