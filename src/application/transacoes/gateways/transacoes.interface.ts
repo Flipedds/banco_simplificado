@@ -10,4 +10,5 @@ export interface IRepositorioDeTransacoes {
   novaTransacao(transacao: Transacao): Promise<TransacaoEntidade | null>;
   listarTransacoes(id_carteira: number): Promise<TransacaoEntidade[]>;
   buscarUsuarioPorId(id: number): Promise<UsuarioEntidade | null>;
+  buscarUsuarioPorEmail(email: string): Promise<UsuarioEntidade | null>;
 }

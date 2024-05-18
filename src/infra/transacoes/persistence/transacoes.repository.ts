@@ -10,6 +10,13 @@ import { Injectable } from '@nestjs/common';
 export class RepositorioDeTransacoesPrisma
   implements IRepositorioDeTransacoesPrisma {
   constructor(private readonly prisma: PrismaClient) { }
+  async buscarPorEmail(email: string): Promise<UsuarioEntidade> {
+    return await this.prisma.tb_usuario.findFirst({
+      where: {
+        email: email,
+      },
+    });
+  }
   async buscarPorId(id: number): Promise<UsuarioEntidade> {
     return await this.prisma.tb_usuario.findFirst({
       where: {

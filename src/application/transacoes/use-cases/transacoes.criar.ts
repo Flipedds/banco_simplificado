@@ -3,6 +3,7 @@ import { IRepositorioDeTransacoes } from '../gateways/transacoes.interface';
 import {
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { FabricaDeTransacoes } from '../../../domain/transacoes/transacoes.factory';
 import { TransacaoEntidade } from 'src/infra/transacoes/persistence/transacoes.entity';
@@ -18,32 +19,12 @@ export class CriarTransacao implements ICriarTransacao {
   ): Promise<TransacaoEntidade | null> {
     const { sub } = req;
     const documentoCarteiraOrigem = sub;
-    const { documentoCarteiraDestino, tipo, valor } = dadosNovaTransacao;
-    return new Promise((resolve, reject) => {
-      if (
-        documentoCarteiraOrigem === documentoCarteiraDestino &&
-        tipo === 'TRANSFERENCIA'
-      ) {
-        reject(
-          new BadRequestException(
-            'Documento de origem e destino não podem ser iguais',
-          ),
-        );
-        return;
-      }
-      if (tipo === 'TRANSFERENCIA' && !documentoCarteiraDestino) {
-        reject(
-          new BadRequestException(
-            'Documento de destino é obrigatório para transferência',
-          ),
-        );
-        return;
-      }
+    const { emailDestino, tipo, valor } = dadosNovaTransacao;
+    return new Promise(async (resolve, reject) => {
       if (valor <= 0) {
         reject(new BadRequestException('Valor deve ser maior que 0'));
         return;
       }
-
       if (tipo === 'SAQUE') {
         const usuario = this.transacoesRepositorio.buscarUsuario(
           documentoCarteiraOrigem,
@@ -138,6 +119,33 @@ export class CriarTransacao implements ICriarTransacao {
       }
 
       if (tipo === 'TRANSFERENCIA') {
+        const destinoUsuario = (await this.transacoesRepositorio.buscarUsuarioPorEmail(emailDestino));
+        if(!destinoUsuario){
+          reject(
+            new NotFoundException('Usuário de destino não encontrado'),
+          );
+          return;
+        }
+        const documentoCarteiraDestino = destinoUsuario.documento;
+        if (
+          documentoCarteiraOrigem === documentoCarteiraDestino &&
+          tipo === 'TRANSFERENCIA'
+        ) {
+          reject(
+            new BadRequestException(
+              'Documento de origem e destino não podem ser iguais',
+            ),
+          );
+          return;
+        }
+        if (tipo === 'TRANSFERENCIA' && !documentoCarteiraDestino) {
+          reject(
+            new BadRequestException(
+              'Documento de destino é obrigatório para transferência',
+            ),
+          );
+          return;
+        }
         const usuarioOrigem = this.transacoesRepositorio.buscarUsuario(
           documentoCarteiraOrigem,
         );

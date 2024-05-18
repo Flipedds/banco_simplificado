@@ -12,36 +12,37 @@ export class ListarTransacoes implements IListarTransacoes {
     async executar(req: AutenticacaoPayload): Promise<TransacaoListar[]> {
         const { sub } = req;
         const documento: string = sub;
-        return new Promise(async (resolve, reject) => {
+        try {
             const usuario = await this.transacoesRepositorio.buscarUsuario(documento);
             if (!usuario) {
-                reject(new NotFoundException('Usuário não encontrado'));
-                return;
+                throw new NotFoundException('Usuário não encontrado');
             }
             const carteira = await this.transacoesRepositorio.buscarCarteira(usuario.id);
             if (!carteira) {
-                reject(new NotFoundException('Carteira não encontrada'));
-                return;
+                throw new NotFoundException('Carteira não encontrada');
             }
             const transacoes = await this.transacoesRepositorio.listarTransacoes(carteira.id);
             if (!transacoes) {
-                reject(new NotFoundException('Transações não encontradas'));
-                return;
+                throw new NotFoundException('Transações não encontradas');
             }
-            resolve(transacoes.map(
-                transacao => {
+            let transacaoListar = await Promise.all(transacoes.map(
+                async transacao => {
                     return {
                         valor: transacao.valor,
                         tipo: transacao.tipo,
-                        status: this.validarStatus(carteira, transacao),
+                        status: await this.validarStatus(carteira, transacao),
                         data: transacao.dt_criacao.toLocaleDateString('pt-BR'),
                         hora: transacao.dt_criacao.toLocaleTimeString('pt-BR'),
                     }
-                }));
-        });
+                }
+            ));
+            return transacaoListar;
+        } catch(error) {
+            throw new NotFoundException('Transações não encontradas');
+        }
     }
 
-    private validarStatus(carteira: Carteira, transacao: TransacaoEntidade): string {
+    private async validarStatus(carteira: Carteira, transacao: TransacaoEntidade): Promise<string> {
         if (transacao.tipo === 'SAQUE') {
             return 'retirado da sua conta';
         }
@@ -49,10 +50,12 @@ export class ListarTransacoes implements IListarTransacoes {
             return 'depositado na sua conta';
         }
         if (transacao.tipo === 'TRANSFERENCIA' && transacao.id_destino === carteira.id) {
-            return 'recebida';
+            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(transacao.id_origem)).nome_completo;
+            return `recebida de ${nome_completo}`;
         }
         if (transacao.tipo === 'TRANSFERENCIA' && transacao.id_origem === carteira.id) {
-            return 'enviada';
+            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(transacao.id_destino)).nome_completo;
+            return `enviada para ${nome_completo}`;
         }
     }
 }
