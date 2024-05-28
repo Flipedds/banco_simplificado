@@ -3,12 +3,14 @@ import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   Min,
 } from 'class-validator';
 import { TipoTransacao } from '../../../../domain/transacoes/transacoes.enums.tipo';
 
 export class DadosNovaTransacao {
   @ApiProperty()
+  @IsOptional()
   @IsEmail({}, { message: 'Email inválido' })
   emailDestino: string;
 

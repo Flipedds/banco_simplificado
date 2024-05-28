@@ -4,6 +4,7 @@ import { TransacaoEntidade } from './transacoes.entity';
 import { Transacao } from 'src/domain/transacoes/transacoes';
 
 export interface IRepositorioDeTransacoesPrisma {
+  buscarCarteiraPorId(id: number): Promise<Carteira>;
   buscarPorEmail(email: string): Promise<UsuarioEntidade>;
   buscarPorDocumento(documento: string): Promise<UsuarioEntidade | null>;
   buscarCarteira(idUsuario: number): Promise<Carteira>;

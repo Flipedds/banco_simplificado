@@ -50,11 +50,13 @@ export class ListarTransacoes implements IListarTransacoes {
             return 'depositado na sua conta';
         }
         if (transacao.tipo === 'TRANSFERENCIA' && transacao.id_destino === carteira.id) {
-            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(transacao.id_origem)).nome_completo;
+            let id_usuario = (await this.transacoesRepositorio.buscarCarteiraPorId(transacao.id_origem)).id_usuario;
+            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(id_usuario)).nome_completo;
             return `recebida de ${nome_completo}`;
         }
         if (transacao.tipo === 'TRANSFERENCIA' && transacao.id_origem === carteira.id) {
-            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(transacao.id_destino)).nome_completo;
+            let id_usuario = (await this.transacoesRepositorio.buscarCarteiraPorId(transacao.id_destino)).id_usuario;
+            let nome_completo = (await this.transacoesRepositorio.buscarUsuarioPorId(id_usuario)).nome_completo;
             return `enviada para ${nome_completo}`;
         }
     }
