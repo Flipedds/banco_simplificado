@@ -34,6 +34,9 @@ export class RepositorioDeTransacoesPrisma
 
   async listar(id_carteira: number): Promise<TransacaoEntidade[]> {
     return await this.prisma.tb_transacao.findMany({
+      orderBy: {
+        dt_criacao: 'desc',
+      },
       where: {
         OR: [
           {
